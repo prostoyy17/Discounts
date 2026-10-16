@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İndirim Avcısı</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1b1f24;--muted:#667085;--line:#e4e7ec;--accent:#e4002b;--warn:#fff4d6;--warnt:#7a5600}
+@media (prefers-color-scheme:dark){:root{--bg:#111418;--card:#1a1e24;--text:#eceff3;--muted:#98a2b3;--line:#2a2f37;--warn:#3a2f10;--warnt:#f3d57a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}
+main{max-width:960px;margin:0 auto;padding:24px 16px}
+h1{margin:0 0 4px;font-size:1.6rem}.sub{color:var(--muted);margin:0 0 16px}
+.demo{background:var(--warn);color:var(--warnt);padding:10px 14px;border-radius:10px;margin:0 0 16px;font-size:.92rem}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+input,select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font:inherit}
+input{flex:1;min-width:180px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.store{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.name{font-weight:600}.prices{display:flex;align-items:baseline;gap:8px}
+.new{font-size:1.3rem;font-weight:700;color:var(--accent)}.old{color:var(--muted);text-decoration:line-through}
+.badge{align-self:flex-start;background:var(--accent);color:#fff;border-radius:6px;padding:1px 7px;font-size:.8rem}
+.empty{color:var(--muted);padding:24px 0}footer{margin-top:28px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+<h1>İndirim Avcısı</h1>
+<p class="sub">Türkiye'deki market indirimleri tek yerde (geliştirme aşamasında)</p>
+<div class="demo"><b>DEMO:</b> aşağıdaki ürünler ve fiyatlar örnek amaçlıdır, gerçek değildir. Gerçek veriler, kaynak sitelerden yazılı izin alındıktan sonra eklenecektir.</div>
+<div class="bar">
+<input id="q" type="search" placeholder="Ürün ara… (örn. süt)">
+<select id="s"><option value="">Tüm marketler</option></select>
+<select id="o"><option value="d">En çok indirim</option><option value="p">En ucuz</option></select>
+</div>
+<div id="g" class="grid"></div>
+<footer>Fiyatlar örnektir. Gerçek fiyat için her zaman marketin kendi kaynağını kontrol edin.</footer>
+</main>
+<script>
+const DATA=[
+{store:"BİM",name:"Örnek Süt 1 L",old:42.5,price:34.9},
+{store:"BİM",name:"Örnek Makarna 500 g",old:28,price:22.5},
+{store:"ŞOK",name:"Örnek Zeytinyağı 1 L",old:310,price:259.9},
+{store:"ŞOK",name:"Örnek Ayçiçek Yağı 2 L",old:180,price:159.5},
+{store:"Migros",name:"Örnek Çay 500 g",old:145,price:119.9},
+{store:"Migros",name:"Örnek Deterjan 3 kg",old:260,price:219},
+{store:"A101",name:"Örnek Yoğurt 1 kg",old:60,price:49.9},
+{store:"A101",name:"Örnek Pirinç 1 kg",old:75,price:75}
+];
+const $=id=>document.getElementById(id),fmt=n=>n.toFixed(2).replace(".",",")+" ₺";
+[...new Set(DATA.map(d=>d.store))].forEach(s=>$("s").add(new Option(s,s)));
+function render(){
+ const q=$("q").value.trim().toLocaleLowerCase("tr"),s=$("s").value;
+ let r=DATA.filter(d=>(!s||d.store===s)&&d.name.toLocaleLowerCase("tr").includes(q));
+ const disc=d=>d.old>d.price?Math.round((1-d.price/d.old)*100):0;
+ r.sort($("o").value==="p"?(a,b)=>a.price-b.price:(a,b)=>disc(b)-disc(a));
+ $("g").replaceChildren();
+ if(!r.length){$("g").innerHTML='<div class="empty">Sonuç bulunamadı.</div>';return}
+ for(const d of r){
+  const c=document.createElement("div");c.className="card";
+  const p=disc(d);
+  const mk=(cls,t)=>{const e=document.createElement("div");e.className=cls;e.textContent=t;return e};
+  c.append(mk("store",d.store),mk("name",d.name));
+  const pr=document.createElement("div");pr.className="prices";
+  pr.append(mk("new",fmt(d.price)));
+  if(p)pr.append(mk("old",fmt(d.old)));
+  c.append(pr);
+  if(p)c.append(mk("badge","%"+p+" indirim"));
+  $("g").append(c);
+ }
+}
+["q","s","o"].forEach(i=>$(i).addEventListener("input",render));render();
+</script>
+</body>
+</html>
