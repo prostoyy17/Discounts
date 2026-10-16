@@ -16,16 +16,26 @@ export function productProblems(p) {
   else if (p.price > 1_000_000) out.push('fiyat şüpheli büyük');
   if (p.oldPrice != null) {
     if (!(p.oldPrice > p.price)) out.push('eski fiyat yeni fiyattan büyük değil');
-    if (p.discountPercent != null) {
-      const computed = Math.round((1 - p.price / p.oldPrice) * 100);
-      if (Math.abs(computed - p.discountPercent) > 1)
-        out.push(`indirim % uyuşmuyor (sitede ${p.discountPercent}, hesap ${computed})`);
-    }
   }
   if (p.section === 'indirim' && p.oldPrice == null) out.push('indirim ürününde eski fiyat yok');
   if (!p.image || !(IMAGE_HOSTS[p.store] ?? []).includes(hostOf(p.image))) out.push('görsel URL bozuk');
   if (!p.url || !(PAGE_HOSTS[p.store] ?? []).includes(hostOf(p.url))) out.push('ürün linki bozuk');
   if (!p.validFrom) out.push('tarih çözülemedi');
+  return out;
+}
+
+/**
+ * Soft issues: the record is still correct to show, but the store's own page
+ * is inconsistent. Example: BİM badge "% 39" on 349 → 199 ₺ (real: 43 %).
+ * We keep the product, show the % computed from prices and log the mismatch.
+ */
+export function productWarnings(p) {
+  const out = [];
+  if (p.oldPrice > p.price && p.discountPercent != null) {
+    const computed = Math.round((1 - p.price / p.oldPrice) * 100);
+    if (Math.abs(computed - p.discountPercent) > 1)
+      out.push(`mağaza rozetinde %${p.discountPercent}, fiyatlara göre %${computed}`);
+  }
   return out;
 }
 

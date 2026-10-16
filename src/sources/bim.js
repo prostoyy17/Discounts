@@ -106,6 +106,17 @@ export function parseMenu(html) {
 }
 
 /**
+ * BİM writes a price either whole ("36,50") or split into ".quantify" "36,"
+ * + ".kusurArea .number" "50" — the listing and the detail page use different
+ * forms for the same old price, so always read both parts.
+ */
+function readPrice($, box) {
+  if (!box || box.length === 0) return null;
+  const text = clean(box.find('.quantify').first().text()) + clean(box.find('.kusurArea .number').first().text());
+  return text ? parseTrPrice(text) : null;
+}
+
+/**
  * Parses one listing page. Returns { products, cardCount, bannerCount }.
  * cardCount = number of non-banner cards found, so the caller can assert
  * that every card became a product (nothing silently dropped).
@@ -127,7 +138,7 @@ export function parseListing(html, page, today = new Date()) {
     const imgSrc = img.attr('src') || img.attr('xsrc') || img.attr('data-src');
     const btn = card.find('a.gButton').first();
     const priceText = clean(btn.find('.quantify').first().text()) + clean(btn.find('.kusurArea .number').first().text());
-    const oldText = card.find('.CountButton.strikethrough .quantify').first().text();
+    const oldBox = card.find('.CountButton.strikethrough').first();
     const discText = clean(card.find('.DiscountButton').first().text());
     const id = card.find('.shareArea a[data-id]').attr('data-id');
 
@@ -144,7 +155,7 @@ export function parseListing(html, page, today = new Date()) {
       name: clean(card.find('h2.title').first().text()),
       quantity: clean(card.find('.gramajadet').first().text()).replace(/^•\s*/, '') || null,
       price: parseTrPrice(priceText),
-      oldPrice: oldText ? parseTrPrice(oldText) : null,
+      oldPrice: readPrice($, oldBox),
       discountPercent: discText ? Number(discText.replace(/[^\d]/g, '')) || null : null,
       currency: 'TRY',
       image: imgSrc ? new URL(imgSrc, BASE).href : null,
@@ -162,14 +173,33 @@ export function parseListing(html, page, today = new Date()) {
 export function parseDetail(html) {
   const $ = cheerio.load(html);
   const area = $('.detailArea').first();
-  const btn = area.find('.priceArea a.gButton').first();
-  const priceText = clean(btn.find('.quantify').first().text()) + clean(btn.find('.kusurArea .number').first().text());
-  const oldText = area.find('.priceArea .CountButton.strikethrough .quantify').first().text();
   return {
     name: clean(area.find('.titleArea h2.title').first().text()),
-    price: parseTrPrice(priceText),
-    oldPrice: oldText ? parseTrPrice(oldText) : null,
+    price: readPrice($, area.find('.priceArea a.gButton').first()),
+    oldPrice: readPrice($, area.find('.priceArea .CountButton.strikethrough').first()),
     image: area.find('.leftSide img').first().attr('src') ?? null,
     id: area.find('.titleArea .shareArea a[data-id]').attr('data-id') ?? null,
   };
+}
+
+/**
+ * BİM sometimes gives several products the same detail URL (e.g. "Sek Ayran"
+ * 10 ₺ and "Yörsan Ayran" 79.5 ₺ both -> /ayran-12-10/), and that page always
+ * shows only one of them; no id-based URL exists. For those products, link to
+ * the period page where the right card is listed and keep the shared link as
+ * detailUrl. Mutates and returns the number of products relinked.
+ */
+export function relinkSharedDetailUrls(products) {
+  const users = new Map();
+  for (const p of products) users.set(p.url, (users.get(p.url) ?? 0) + 1);
+  let n = 0;
+  for (const p of products) {
+    if (users.get(p.url) > 1) {
+      p.detailUrl = p.url;
+      p.url = p.sourcePage;
+      p.sharedDetailUrl = true;
+      n++;
+    }
+  }
+  return n;
 }

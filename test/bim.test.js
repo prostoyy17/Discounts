@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseMenu, parseListing, parseTrPrice, parseDateLabel } from '../src/sources/bim.js';
-import { productProblems, pageProblems } from '../src/validate.js';
+import { parseMenu, parseListing, parseDetail, parseTrPrice, parseDateLabel, relinkSharedDetailUrls } from '../src/sources/bim.js';
+import { productProblems, productWarnings, pageProblems } from '../src/validate.js';
 
 const fx = (f) => fs.readFileSync(new URL(`./fixtures/bim/${f}`, import.meta.url), 'utf8');
 const TODAY = new Date('2026-10-16T12:00:00Z');
@@ -80,10 +80,37 @@ test('validator rejects broken records', () => {
   assert.deepEqual(productProblems(good), []);
   assert.ok(productProblems({ ...good, price: null }).length);
   assert.ok(productProblems({ ...good, oldPrice: 20 }).length);
-  assert.ok(productProblems({ ...good, discountPercent: 50 }).length);
+  // store's own wrong % badge is a warning, not a reason to drop the product
+  assert.deepEqual(productProblems({ ...good, discountPercent: 50 }), []);
+  assert.equal(productWarnings({ ...good, discountPercent: 50 }).length, 1);
+  assert.deepEqual(productWarnings(good), []);
   assert.ok(productProblems({ ...good, oldPrice: null, discountPercent: null }).length);
   assert.ok(productProblems({ ...good, image: 'https://evil.example/x.jpg' }).length);
   assert.ok(productProblems({ ...good, name: 'A &amp; B' }).length);
   assert.ok(pageProblems({ products: [good, good], cardCount: 2, errors: [] }).length);
   assert.ok(pageProblems({ products: [good], cardCount: 2, errors: [] }).length);
+});
+
+test('detail page: split old price "36," + "50" read with kuruş', () => {
+  const d = parseDetail(fx('detail-rus-salatasi.html'));
+  assert.equal(d.name, 'Rus Salatası');
+  assert.equal(d.price, 32.5);
+  assert.equal(d.oldPrice, 36.5);
+  const e = parseDetail(fx('detail-eliptik.html'));
+  assert.equal(e.name, 'STAR SC300 ELİPTİK BİSİKLET');
+  assert.equal(e.price, 7950);
+  assert.equal(e.oldPrice, null);
+  assert.equal(e.id, '71559');
+});
+
+test('products sharing one BİM detail URL link to their period page', () => {
+  const mk = (id, url) => ({ id, url, sourcePage: 'https://www.bim.com.tr/Categories/100/aktuel-urunler.aspx?top=1&Bim_AktuelTarihKey=1686' });
+  const list = [mk('bim-71828', 'https://www.bim.com.tr/aktuel-urunler/ayran-12-10/aktuel.aspx'),
+    mk('bim-71834', 'https://www.bim.com.tr/aktuel-urunler/ayran-12-10/aktuel.aspx'),
+    mk('bim-1', 'https://www.bim.com.tr/aktuel-urunler/sut-12-10/aktuel.aspx')];
+  assert.equal(relinkSharedDetailUrls(list), 2);
+  assert.equal(list[1].url, list[1].sourcePage);
+  assert.equal(list[1].detailUrl, 'https://www.bim.com.tr/aktuel-urunler/ayran-12-10/aktuel.aspx');
+  assert.equal(list[2].url, 'https://www.bim.com.tr/aktuel-urunler/sut-12-10/aktuel.aspx');
+  assert.equal(list[2].sharedDetailUrl, undefined);
 });

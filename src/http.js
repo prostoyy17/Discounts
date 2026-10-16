@@ -2,7 +2,7 @@
 // requests to the same host, timeout and a few retries on network/5xx errors.
 
 export const USER_AGENT =
-  'IndirimAvcisi/0.1 (+https://prostoyy17.github.io/Discounts/; bezzimeni17@gmail.com)';
+  'RevoSellBot/0.1 (+https://prostoyy17.github.io/Discounts/; bezzimeni17@gmail.com)';
 
 const lastRequestAt = new Map();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
