@@ -3,73 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
 <title>İndirim Avcısı</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%25%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Türkiye market indirimleri ve aktüel ürünler tek yerde.">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--text:#1b1f24;--muted:#667085;--line:#e4e7ec;--accent:#e4002b;--warn:#fff4d6;--warnt:#7a5600}
-@media (prefers-color-scheme:dark){:root{--bg:#111418;--card:#1a1e24;--text:#eceff3;--muted:#98a2b3;--line:#2a2f37;--warn:#3a2f10;--warnt:#f3d57a}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,sans-serif}
-main{max-width:960px;margin:0 auto;padding:24px 16px}
-h1{margin:0 0 4px;font-size:1.6rem}.sub{color:var(--muted);margin:0 0 16px}
-.demo{background:var(--warn);color:var(--warnt);padding:10px 14px;border-radius:10px;margin:0 0 16px;font-size:.92rem}
-.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-input,select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font:inherit}
-input{flex:1;min-width:180px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
-.store{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.name{font-weight:600}.prices{display:flex;align-items:baseline;gap:8px}
-.new{font-size:1.3rem;font-weight:700;color:var(--accent)}.old{color:var(--muted);text-decoration:line-through}
-.badge{align-self:flex-start;background:var(--accent);color:#fff;border-radius:6px;padding:1px 7px;font-size:.8rem}
-.empty{color:var(--muted);padding:24px 0}footer{margin-top:28px;color:var(--muted);font-size:.85rem}
+:root{--bg:#f5f6f8;--card:#fff;--text:#16191d;--muted:#667085;--line:#e4e7ec;--accent:#d7001f;--accent-soft:#fde8eb;--ok:#067647;--ok-soft:#dcfae6;--soon:#b54708;--soon-soft:#fef0c7;--chip:#eef0f3}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1114;--card:#191c21;--text:#eceff3;--muted:#98a2b3;--line:#2a2f37;--accent:#ff4d5e;--accent-soft:#3a1519;--ok:#47cd89;--ok-soft:#0f2e1f;--soon:#fdb022;--soon-soft:#33260b;--chip:#232830}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;gap:12px;padding:12px 0}
+.logo{font-weight:800;font-size:1.25rem;letter-spacing:-.02em}.logo span{color:var(--accent)}
+.meta{color:var(--muted);font-size:.82rem;margin-left:auto;text-align:right}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer;white-space:nowrap}
+.tab small{color:var(--muted);margin-left:4px}
+.tab[aria-pressed=true]{background:var(--text);color:var(--card);border-color:var(--text)}
+.tab[aria-pressed=true] small{color:inherit;opacity:.7}
+.bar{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0}
+input,select{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font:inherit}
+input{flex:1;min-width:200px}
+.count{color:var(--muted);font-size:.88rem;padding-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding-bottom:24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.img{aspect-ratio:543/467;background:#fff;position:relative}
+.img img{width:100%;height:100%;object-fit:contain;display:block}
+.pct{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-weight:700;border-radius:8px;padding:2px 8px;font-size:.85rem}
+.body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.brand{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.name{font-weight:600;line-height:1.3}
+.qty{font-size:.82rem;color:var(--muted)}
+.prices{display:flex;align-items:baseline;gap:8px;margin-top:auto;padding-top:6px}
+.price{font-size:1.25rem;font-weight:800;color:var(--accent)}
+.old{color:var(--muted);text-decoration:line-through;font-size:.9rem}
+.when{align-self:flex-start;font-size:.75rem;border-radius:6px;padding:1px 7px;background:var(--chip);color:var(--muted);margin-top:4px}
+.when.now{background:var(--ok-soft);color:var(--ok)}
+.when.soon{background:var(--soon-soft);color:var(--soon)}
+.empty,.err{color:var(--muted);padding:40px 0;text-align:center}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:.8rem;padding:16px 0 28px}
+footer a{color:inherit}
+@media (max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:8px}.body{padding:8px 9px 10px}.price{font-size:1.08rem}.name{font-size:.9rem}.meta{font-size:.72rem}select{flex:1}}
 </style>
 </head>
 <body>
-<main>
-<h1>İndirim Avcısı</h1>
-<p class="sub">Türkiye'deki market indirimleri tek yerde (geliştirme aşamasında)</p>
-<div class="demo"><b>DEMO:</b> aşağıdaki ürünler ve fiyatlar örnek amaçlıdır, gerçek değildir. Gerçek veriler, kaynak sitelerden yazılı izin alındıktan sonra eklenecektir.</div>
-<div class="bar">
-<input id="q" type="search" placeholder="Ürün ara… (örn. süt)">
-<select id="s"><option value="">Tüm marketler</option></select>
-<select id="o"><option value="d">En çok indirim</option><option value="p">En ucuz</option></select>
-</div>
-<div id="g" class="grid"></div>
-<footer>Fiyatlar örnektir. Gerçek fiyat için her zaman marketin kendi kaynağını kontrol edin.</footer>
+<header>
+ <div class="wrap">
+  <div class="top"><div class="logo">İndirim<span>Avcısı</span></div><div class="meta" id="meta">Yükleniyor…</div></div>
+  <nav class="tabs" id="tabs" aria-label="Dönem"></nav>
+ </div>
+</header>
+<main class="wrap">
+ <div class="bar">
+  <input id="q" type="search" placeholder="Ürün veya marka ara… (örn. çay, Arzum)" autocomplete="off">
+  <select id="sort" aria-label="Sırala">
+   <option value="disc">En çok indirim</option>
+   <option value="asc">Fiyat: düşükten yükseğe</option>
+   <option value="desc">Fiyat: yüksekten düşüğe</option>
+   <option value="name">Ada göre</option>
+  </select>
+ </div>
+ <div class="count" id="count"></div>
+ <div class="grid" id="grid"></div>
 </main>
+<footer class="wrap">
+ Kaynak: <a href="https://www.bim.com.tr/Categories/100/aktuel-urunler.aspx" rel="noopener">bim.com.tr — Aktüel Ürünler</a>.
+ Fiyatlar ve görseller BİM'e aittir; ürüne tıklayınca BİM'in kendi sayfası açılır.
+ Fiyatlar bilgi amaçlıdır, mağazada değişebilir ve stoklarla sınırlıdır. Kaldırılmasını istediğiniz içerik için: bezzimeni17@gmail.com
+</footer>
 <script>
-const DATA=[
-{store:"BİM",name:"Örnek Süt 1 L",old:42.5,price:34.9},
-{store:"BİM",name:"Örnek Makarna 500 g",old:28,price:22.5},
-{store:"ŞOK",name:"Örnek Zeytinyağı 1 L",old:310,price:259.9},
-{store:"ŞOK",name:"Örnek Ayçiçek Yağı 2 L",old:180,price:159.5},
-{store:"Migros",name:"Örnek Çay 500 g",old:145,price:119.9},
-{store:"Migros",name:"Örnek Deterjan 3 kg",old:260,price:219},
-{store:"A101",name:"Örnek Yoğurt 1 kg",old:60,price:49.9},
-{store:"A101",name:"Örnek Pirinç 1 kg",old:75,price:75}
-];
-const $=id=>document.getElementById(id),fmt=n=>n.toFixed(2).replace(".",",")+" ₺";
-[...new Set(DATA.map(d=>d.store))].forEach(s=>$("s").add(new Option(s,s)));
-function render(){
- const q=$("q").value.trim().toLocaleLowerCase("tr"),s=$("s").value;
- let r=DATA.filter(d=>(!s||d.store===s)&&d.name.toLocaleLowerCase("tr").includes(q));
- const disc=d=>d.old>d.price?Math.round((1-d.price/d.old)*100):0;
- r.sort($("o").value==="p"?(a,b)=>a.price-b.price:(a,b)=>disc(b)-disc(a));
- $("g").replaceChildren();
- if(!r.length){$("g").innerHTML='<div class="empty">Sonuç bulunamadı.</div>';return}
- for(const d of r){
-  const c=document.createElement("div");c.className="card";
-  const p=disc(d);
-  const mk=(cls,t)=>{const e=document.createElement("div");e.className=cls;e.textContent=t;return e};
-  c.append(mk("store",d.store),mk("name",d.name));
-  const pr=document.createElement("div");pr.className="prices";
-  pr.append(mk("new",fmt(d.price)));
-  if(p)pr.append(mk("old",fmt(d.old)));
-  c.append(pr);
-  if(p)c.append(mk("badge","%"+p+" indirim"));
-  $("g").append(c);
- }
+const $ = (id) => document.getElementById(id);
+const fmt = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+const money = (n) => fmt.format(n) + ' ₺';
+const lower = (s) => (s || '').toLocaleLowerCase('tr');
+const todayIso = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
+let DATA = null, current = 'all';
+
+function status(p) {
+  if (p.validTo && p.validTo < todayIso) return ['bitti', ''];
+  if (p.validFrom > todayIso) return ['soon', p.section === 'indirim' ? p.periodLabel : p.periodLabel + ' satışta'];
+  return ['now', p.section === 'indirim' ? p.periodLabel + ' · indirimde' : 'Satışta · ' + p.periodLabel];
 }
-["q","s","o"].forEach(i=>$(i).addEventListener("input",render));render();
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+function renderTabs() {
+  const tabs = [{ key: 'all', label: 'Tümü', n: DATA.products.length },
+    { key: 'indirim', label: '% İndirimler', n: DATA.stats.indirim },
+    ...[...DATA.periods].filter((p) => p.section === 'aktuel').sort((a, b) => (a.validFrom || '').localeCompare(b.validFrom || ''))
+      .map((p) => ({ key: p.key, label: p.label, n: p.count }))];
+  $('tabs').replaceChildren(...tabs.map((t) => {
+    const b = el('button', 'tab', t.label); b.type = 'button';
+    b.append(el('small', '', t.n)); b.setAttribute('aria-pressed', t.key === current);
+    b.onclick = () => { current = t.key; renderTabs(); render(); };
+    return b;
+  }));
+}
+
+function render() {
+  const q = lower($('q').value.trim());
+  let list = DATA.products.filter((p) =>
+    (current === 'all' || (current === 'indirim' ? p.section === 'indirim' : p.periodKey === current)) &&
+    (!q || lower(p.name + ' ' + (p.brand || '') + ' ' + (p.quantity || '')).includes(q)) &&
+    status(p)[0] !== 'bitti');
+  const disc = (p) => p.oldPrice ? 1 - p.price / p.oldPrice : 0;
+  const sorters = {
+    disc: (a, b) => disc(b) - disc(a) || (a.validFrom || '').localeCompare(b.validFrom || '') || a.price - b.price,
+    asc: (a, b) => a.price - b.price, desc: (a, b) => b.price - a.price,
+    name: (a, b) => a.name.localeCompare(b.name, 'tr'),
+  };
+  list.sort(sorters[$('sort').value]);
+  $('count').textContent = list.length + ' ürün';
+  if (!list.length) { $('grid').replaceChildren(el('div', 'empty', 'Sonuç bulunamadı.')); return; }
+  $('grid').replaceChildren(...list.map((p) => {
+    const a = el('a', 'card'); a.href = p.url; a.target = '_blank'; a.rel = 'noopener';
+    const box = el('div', 'img'); const img = el('img'); img.loading = 'lazy'; img.decoding = 'async';
+    img.referrerPolicy = 'no-referrer'; img.src = p.image; img.alt = [p.brand, p.name].filter(Boolean).join(' ');
+    box.append(img);
+    if (p.oldPrice) box.append(el('div', 'pct', '%' + (p.discountPercent ?? Math.round(disc(p) * 100))));
+    const body = el('div', 'body');
+    if (p.brand) body.append(el('div', 'brand', p.brand));
+    body.append(el('div', 'name', p.name));
+    if (p.quantity) body.append(el('div', 'qty', p.quantity));
+    const pr = el('div', 'prices'); pr.append(el('span', 'price', money(p.price)));
+    if (p.oldPrice) pr.append(el('span', 'old', money(p.oldPrice)));
+    body.append(pr);
+    const [st, txt] = status(p); body.append(el('div', 'when ' + st, txt));
+    a.append(box, body); return a;
+  }));
+}
+
+fetch('data/bim.json', { cache: 'no-cache' }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((d) => {
+  DATA = d;
+  const t = new Date(d.fetchedAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'short' });
+  $('meta').textContent = `BİM · ${d.stats.products} ürün · güncellendi ${t}`;
+  renderTabs(); render();
+}).catch(() => { $('meta').textContent = ''; $('grid').replaceChildren(el('div', 'err', 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.')); });
+['q', 'sort'].forEach((id) => $(id).addEventListener('input', render));
 </script>
 </body>
 </html>

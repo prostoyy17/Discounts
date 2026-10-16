@@ -1,7 +1,13 @@
 name: Deploy site to GitHub Pages
+# Crawls BİM, validates the data, spot-checks it against product pages and
+# publishes the site. If any check fails nothing is deployed and the previous
+# version of the site stays online.
 on:
   push:
     branches: [master]
+  schedule:
+    # 06:12 and 18:12 Turkey time (UTC+3). BİM posts new catalogs on Tue/Fri.
+    - cron: '12 3,15 * * *'
   workflow_dispatch:
 permissions:
   contents: read
@@ -9,7 +15,7 @@ permissions:
   id-token: write
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,9 +24,18 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/setup-node@v4
         with:
-          enablement: true
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Crawl BİM
+        run: npm run crawl:bim
+      - name: Verify sample against product pages
+        run: npm run verify:bim -- --sample 12
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
