@@ -1,148 +1,317 @@
 <!doctype html>
-<html lang="tr">
+<html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
-<title>RevoSell — Market İndirimleri</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%25%3C/text%3E%3C/svg%3E">
-<meta name="description" content="RevoSell: Türkiye market indirimleri ve aktüel ürünler tek yerde.">
+<meta name="theme-color" content="#F5F5F3">
+<title>RevoSell — скидки магазинов Турции</title>
+<meta name="description" content="RevoSell: скидки и акции магазинов Турции в одном месте.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23D7FF00%22/%3E%3Ctext x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-weight=%22900%22%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <style>
-:root{--bg:#f5f6f8;--card:#fff;--text:#16191d;--muted:#667085;--line:#e4e7ec;--accent:#d7001f;--accent-soft:#fde8eb;--ok:#067647;--ok-soft:#dcfae6;--soon:#b54708;--soon-soft:#fef0c7;--chip:#eef0f3}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1114;--card:#191c21;--text:#eceff3;--muted:#98a2b3;--line:#2a2f37;--accent:#ff4d5e;--accent-soft:#3a1519;--ok:#47cd89;--ok-soft:#0f2e1f;--soon:#fdb022;--soon-soft:#33260b;--chip:#232830}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+:root{
+  --bg:#F5F5F3; --surface:#FFFFFF; --mint:#C5E2DF; --lime:#D7FF00; --ink:#000000;
+  --text:#111111; --muted:#7A7D86; --soft:#ECECE8; --shadow:0 6px 24px rgba(17,17,17,.06);
+  --r-xl:28px; --r-lg:22px; --r-md:16px;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:120px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+input{font:inherit;color:inherit;border:0;outline:0;background:none}
+a{color:inherit}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
-.top{display:flex;align-items:center;gap:12px;padding:12px 0}
-.logo{font-weight:800;font-size:1.25rem;letter-spacing:-.02em}.logo span{color:var(--accent)}
-.meta{color:var(--muted);font-size:.82rem;margin-left:auto;text-align:right}
-.tabs{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{flex:none;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:6px 12px;font:inherit;font-size:.88rem;cursor:pointer;white-space:nowrap}
-.tab small{color:var(--muted);margin-left:4px}
-.tab[aria-pressed=true]{background:var(--text);color:var(--card);border-color:var(--text)}
-.tab[aria-pressed=true] small{color:inherit;opacity:.7}
-.bar{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0}
-input,select{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font:inherit}
-input{flex:1;min-width:200px}
-.count{color:var(--muted);font-size:.88rem;padding-bottom:10px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding-bottom:24px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .12s,box-shadow .12s}
-.card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08)}
-.img{aspect-ratio:543/467;background:#fff;position:relative}
-.img img{width:100%;height:100%;object-fit:contain;display:block}
-.pct{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-weight:700;border-radius:8px;padding:2px 8px;font-size:.85rem}
-.body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
-.brand{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.name{font-weight:600;line-height:1.3}
-.qty{font-size:.82rem;color:var(--muted)}
-.prices{display:flex;align-items:baseline;gap:8px;margin-top:auto;padding-top:6px}
-.price{font-size:1.25rem;font-weight:800;color:var(--accent)}
-.old{color:var(--muted);text-decoration:line-through;font-size:.9rem}
-.when{align-self:flex-start;font-size:.75rem;border-radius:6px;padding:1px 7px;background:var(--chip);color:var(--muted);margin-top:4px}
-.when.now{background:var(--ok-soft);color:var(--ok)}
-.when.soon{background:var(--soon-soft);color:var(--soon)}
-.empty,.err{color:var(--muted);padding:40px 0;text-align:center}
-footer{border-top:1px solid var(--line);color:var(--muted);font-size:.8rem;padding:16px 0 28px}
-footer a{color:inherit}
-@media (max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:8px}.body{padding:8px 9px 10px}.price{font-size:1.08rem}.name{font-size:.9rem}.meta{font-size:.72rem}select{flex:1}}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:10px;padding:18px 0 14px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{width:44px;height:44px;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:22px}
+.logo-name{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.45rem;letter-spacing:-.01em;text-transform:uppercase}
+.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.circle{width:44px;height:44px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:20px;box-shadow:var(--shadow)}
+.lang{display:flex;background:var(--surface);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
+.lang button{padding:7px 12px;border-radius:999px;font-weight:600;font-size:.82rem;color:var(--muted)}
+.lang button[aria-pressed=true]{background:var(--mint);color:var(--ink)}
+
+/* search */
+.search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:999px;padding:6px 6px 6px 18px;box-shadow:var(--shadow)}
+.search i{font-size:20px;color:var(--ink)}
+.search input{flex:1;min-width:0;padding:8px 0}
+.search input::placeholder{color:#A3A6AE}
+.lime-btn{width:44px;height:44px;flex:none;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:20px;color:var(--ink)}
+.lime-btn.sm{width:38px;height:38px;font-size:18px}
+
+.sortsheet{display:none;gap:8px;flex-wrap:wrap;padding:12px 0 0}
+.sortsheet.open{display:flex}
+
+/* headline */
+h1{font-family:Archivo,Inter,sans-serif;font-stretch:78%;font-weight:900;font-size:clamp(2.1rem,7vw,3.4rem);line-height:.95;letter-spacing:-.01em;text-transform:uppercase;margin:26px 0 8px}
+.meta{color:var(--muted);font-size:.85rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.meta .dot{width:4px;height:4px;border-radius:50%;background:#C3C5CC}
+
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:18px 16px 4px;margin:0 -16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;background:var(--surface);border-radius:999px;padding:11px 18px;font-weight:500;font-size:.9rem;white-space:nowrap;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+.chip small{color:var(--muted);font-weight:500}
+.chip[aria-pressed=true]{background:var(--mint)}
+.chip[aria-pressed=true] small{color:#3d5553}
+
+.count{color:var(--muted);font-size:.85rem;padding:16px 0 12px}
+
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.card{background:var(--surface);border-radius:var(--r-xl);padding:10px;display:flex;flex-direction:column;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .15s}
+.card:hover{transform:translateY(-3px)}
+.pic{position:relative;border-radius:var(--r-lg);background:#fff;aspect-ratio:543/467;overflow:hidden}
+.pic img{width:100%;height:100%;object-fit:contain;display:block}
+.badge{position:absolute;top:10px;left:10px;background:var(--lime);color:var(--ink);font-weight:700;font-size:.8rem;border-radius:999px;padding:5px 10px}
+.body{padding:10px 6px 4px;display:flex;flex-direction:column;gap:2px;flex:1}
+.status{align-self:flex-start;display:flex;align-items:center;gap:4px;background:var(--mint);border-radius:999px;padding:3px 9px;font-size:.72rem;font-weight:600;color:#26403e;margin-bottom:6px}
+.status.soon{background:#FFF7C2;color:#5c5200}
+.brand{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.name{font-weight:700;line-height:1.25;font-size:.98rem}
+.qty{font-size:.8rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+.row{display:flex;align-items:flex-end;gap:8px;margin-top:auto;padding-top:10px}
+.prices{display:flex;flex-direction:column;line-height:1.1}
+.price{font-family:Archivo,Inter,sans-serif;font-stretch:85%;font-weight:800;font-size:1.45rem;letter-spacing:-.01em}
+.old{color:var(--muted);text-decoration:line-through;font-size:.85rem}
+.row .lime-btn{margin-left:auto}
+.empty{color:var(--muted);text-align:center;padding:60px 0;grid-column:1/-1}
+.empty i{font-size:40px;display:block;margin-bottom:8px}
+
+/* about */
+.about{display:none;background:var(--surface);border-radius:var(--r-lg);padding:16px 18px;margin-top:14px;box-shadow:var(--shadow);font-size:.88rem;color:#3b3e45}
+.about.open{display:block}
+.about b{color:var(--ink)}
+footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
+
+/* bottom nav */
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(440px,calc(100% - 24px));height:68px;background:var(--mint);border-radius:26px;display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:10;box-shadow:0 10px 30px rgba(17,17,17,.12)}
+.nav button{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:24px;color:#1b2b2a}
+.nav button.center{width:64px;height:64px;margin-top:-34px;background:var(--lime);font-size:26px;box-shadow:0 0 0 8px var(--bg)}
+.nav button[aria-current=true]:not(.center){background:rgba(255,255,255,.55)}
+.nav span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (max-width:520px){
+  .grid{grid-template-columns:1fr 1fr;gap:10px}
+  .card{padding:7px;border-radius:22px}
+  .pic{border-radius:17px}
+  .body{padding:8px 4px 2px}
+  .name{font-size:.88rem}
+  .price{font-size:1.2rem}
+  .lime-btn.sm{width:34px;height:34px;font-size:16px}
+  .logo-name{font-size:1.25rem}
+  .circle,.logo-mark{width:40px;height:40px}
+}
 </style>
 </head>
 <body>
-<header>
- <div class="wrap">
-  <div class="top"><div class="logo">Revo<span>Sell</span></div><div class="meta" id="meta">Yükleniyor…</div></div>
-  <nav class="tabs" id="tabs" aria-label="Dönem"></nav>
- </div>
-</header>
 <main class="wrap">
- <div class="bar">
-  <input id="q" type="search" placeholder="Ürün veya marka ara… (örn. çay, Arzum)" autocomplete="off">
-  <select id="sort" aria-label="Sırala">
-   <option value="disc">En çok indirim</option>
-   <option value="asc">Fiyat: düşükten yükseğe</option>
-   <option value="desc">Fiyat: yüksekten düşüğe</option>
-   <option value="name">Ada göre</option>
-  </select>
- </div>
- <div class="count" id="count"></div>
- <div class="grid" id="grid"></div>
+  <header class="top">
+    <a class="logo" href="./"><span class="logo-mark"><i class="ph-bold ph-tag"></i></span><span class="logo-name">RevoSell</span></a>
+    <div class="top-actions">
+      <div class="lang" role="group" aria-label="Язык">
+        <button type="button" data-lang="ru">RU</button>
+        <button type="button" data-lang="tr">TR</button>
+      </div>
+      <button class="circle" type="button" id="aboutBtn" aria-label="О сайте"><i class="ph ph-info"></i></button>
+    </div>
+  </header>
+
+  <label class="search">
+    <i class="ph ph-magnifying-glass"></i>
+    <input id="q" type="search" autocomplete="off">
+    <button class="lime-btn" type="button" id="sortBtn" aria-label="Сортировка"><i class="ph-bold ph-sliders-horizontal"></i></button>
+  </label>
+  <div class="sortsheet" id="sortsheet"></div>
+
+  <div class="about" id="about"></div>
+
+  <h1 id="title"></h1>
+  <div class="meta" id="meta"></div>
+
+  <nav class="chips" id="chips"></nav>
+  <div class="count" id="count"></div>
+  <section class="grid" id="grid"></section>
+  <footer id="footer"></footer>
 </main>
-<footer class="wrap">
- Kaynak: <a href="https://www.bim.com.tr/Categories/100/aktuel-urunler.aspx" rel="noopener">bim.com.tr — Aktüel Ürünler</a>.
- Fiyatlar ve görseller BİM'e aittir; ürüne tıklayınca BİM'in kendi sayfası açılır.
- Fiyatlar bilgi amaçlıdır, mağazada değişebilir ve stoklarla sınırlıdır. Kaldırılmasını istediğiniz içerik için: bezzimeni17@gmail.com
-</footer>
+
+<nav class="nav" id="nav">
+  <button type="button" data-view="stores"><i class="ph ph-storefront"></i><span></span></button>
+  <button type="button" data-view="indirim"><i class="ph ph-percent"></i><span></span></button>
+  <button type="button" data-view="all" class="center"><i class="ph-fill ph-house"></i><span></span></button>
+  <button type="button" data-view="soon"><i class="ph ph-calendar-dots"></i><span></span></button>
+  <button type="button" data-view="search"><i class="ph ph-magnifying-glass"></i><span></span></button>
+</nav>
+
 <script>
+const I18N = {
+  ru: {
+    title: 'Лови скидки<br>недели', search: 'Найти товар или бренд…', all: 'Все', indirim: 'Скидки %', soon: 'Скоро',
+    products: (n) => `${n} ${plural(n, ['товар', 'товара', 'товаров'])}`, updated: 'обновлено',
+    sort: { disc: 'Самая большая скидка', asc: 'Сначала дешёвые', desc: 'Сначала дорогие', date: 'По дате', name: 'По названию' },
+    onSale: (d) => `В продаже с ${d}`, startsOn: (d) => `С ${d}`, discountUntil: (d) => `Скидка до ${d}`, discountFrom: (d) => `Скидка с ${d}`,
+    empty: 'Ничего не найдено', error: 'Не удалось загрузить данные. Попробуйте позже.',
+    nav: { stores: 'Магазины', indirim: 'Скидки', all: 'Все', soon: 'Скоро', search: 'Поиск' },
+    about: '<b>RevoSell</b> собирает акции магазинов Турции. Сейчас: <b>BİM</b> — «Aktüel» и «İndirim». Данные обновляются дважды в день и проверяются: цена, старая цена, фото и ссылка. Цены и фото принадлежат магазину, по клику открывается его страница. Цена в магазине может отличаться, количество ограничено.',
+    footer: 'Источник: bim.com.tr · цены и фото принадлежат BİM · убрать данные: bezzimeni17@gmail.com',
+    locale: 'ru-RU',
+  },
+  tr: {
+    title: 'Haftanın<br>indirimleri', search: 'Ürün veya marka ara…', all: 'Tümü', indirim: '% İndirim', soon: 'Yakında',
+    products: (n) => `${n} ürün`, updated: 'güncellendi',
+    sort: { disc: 'En çok indirim', asc: 'Önce ucuz', desc: 'Önce pahalı', date: 'Tarihe göre', name: 'Ada göre' },
+    onSale: (d) => `${d} tarihinden beri satışta`, startsOn: (d) => `${d} tarihinde`, discountUntil: (d) => `${d} tarihine kadar indirimde`, discountFrom: (d) => `${d} tarihinden itibaren indirim`,
+    empty: 'Sonuç bulunamadı', error: 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.',
+    nav: { stores: 'Mağazalar', indirim: 'İndirim', all: 'Tümü', soon: 'Yakında', search: 'Ara' },
+    about: '<b>RevoSell</b> Türkiye market kampanyalarını toplar. Şu an: <b>BİM</b> — Aktüel ve İndirim. Veriler günde iki kez güncellenir ve kontrol edilir: fiyat, eski fiyat, görsel ve link. Fiyat ve görseller mağazaya aittir; tıklayınca mağazanın sayfası açılır. Mağazadaki fiyat farklı olabilir, stoklarla sınırlıdır.',
+    footer: 'Kaynak: bim.com.tr · fiyat ve görseller BİM\'e aittir · kaldırma talebi: bezzimeni17@gmail.com',
+    locale: 'tr-TR',
+  },
+};
+function plural(n, f) { const a = n % 10, b = n % 100; return a === 1 && b !== 11 ? f[0] : a >= 2 && a <= 4 && (b < 12 || b > 14) ? f[1] : f[2]; }
+
 const $ = (id) => document.getElementById(id);
-const fmt = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-const money = (n) => fmt.format(n) + ' ₺';
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const icon = (name, weight = 'ph') => el('i', `${weight} ph-${name}`);
 const lower = (s) => (s || '').toLocaleLowerCase('tr');
 const todayIso = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
-let DATA = null, current = 'all';
+
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+let lang = store.get('lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'ru');
+let view = 'all', sort = 'disc', DATA = null;
+const T = () => I18N[lang];
+
+const dayFmt = () => new Intl.DateTimeFormat(T().locale, { day: 'numeric', month: 'short', timeZone: 'UTC' });
+const weekFmt = () => new Intl.DateTimeFormat(T().locale, { day: 'numeric', month: 'short', weekday: 'short', timeZone: 'UTC' });
+const d = (iso) => dayFmt().format(new Date(iso + 'T00:00:00Z'));
+const money = (n) => new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n) + ' ₺';
+const periodLabel = (p) => p.section === 'indirim' && p.validTo
+  ? `${d(p.validFrom)} – ${d(p.validTo)}` : weekFmt().format(new Date(p.validFrom + 'T00:00:00Z'));
 
 function status(p) {
-  if (p.validTo && p.validTo < todayIso) return ['bitti', ''];
-  if (p.validFrom > todayIso) return ['soon', p.section === 'indirim' ? p.periodLabel : p.periodLabel + ' satışta'];
-  return ['now', p.section === 'indirim' ? p.periodLabel + ' · indirimde' : 'Satışta · ' + p.periodLabel];
+  if (p.validTo && p.validTo < todayIso) return null;
+  const future = p.validFrom > todayIso;
+  if (p.section === 'indirim') return [future ? 'soon' : 'now', future ? T().discountFrom(d(p.validFrom)) : T().discountUntil(d(p.validTo))];
+  return [future ? 'soon' : 'now', future ? T().startsOn(d(p.validFrom)) : T().onSale(d(p.validFrom))];
 }
 
-function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function matches(p) {
+  if (!status(p)) return false;
+  if (view === 'indirim') return p.section === 'indirim';
+  if (view === 'soon') return p.validFrom > todayIso;
+  if (view.startsWith('k:')) return p.periodKey === view.slice(2);
+  return true;
+}
 
-function renderTabs() {
-  const tabs = [{ key: 'all', label: 'Tümü', n: DATA.products.length },
-    { key: 'indirim', label: '% İndirimler', n: DATA.stats.indirim },
-    ...[...DATA.periods].filter((p) => p.section === 'aktuel').sort((a, b) => (a.validFrom || '').localeCompare(b.validFrom || ''))
-      .map((p) => ({ key: p.key, label: p.label, n: p.count }))];
-  $('tabs').replaceChildren(...tabs.map((t) => {
-    const b = el('button', 'tab', t.label); b.type = 'button';
-    b.append(el('small', '', t.n)); b.setAttribute('aria-pressed', t.key === current);
-    b.onclick = () => { current = t.key; renderTabs(); render(); };
+function renderStatic() {
+  document.documentElement.lang = lang;
+  $('title').innerHTML = T().title;
+  $('q').placeholder = T().search;
+  $('about').innerHTML = T().about;
+  $('footer').textContent = T().footer;
+  document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  document.querySelectorAll('#nav button').forEach((b) => { b.querySelector('span').textContent = T().nav[b.dataset.view]; b.setAttribute('aria-label', T().nav[b.dataset.view]); });
+  $('sortsheet').replaceChildren(...Object.entries(T().sort).map(([k, label]) => {
+    const b = el('button', 'chip', label); b.type = 'button'; b.setAttribute('aria-pressed', k === sort);
+    b.onclick = () => { sort = k; renderStatic(); render(); };
     return b;
   }));
+  if (DATA) {
+    const t = new Date(DATA.fetchedAt).toLocaleString(T().locale, { timeZone: 'Europe/Istanbul', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    $('meta').replaceChildren(el('span', '', 'BİM'), el('span', 'dot'), el('span', '', T().products(DATA.stats.products)), el('span', 'dot'), el('span', '', `${T().updated} ${t}`));
+  }
+}
+
+function renderChips() {
+  const live = DATA.products.filter((p) => status(p));
+  const count = (f) => live.filter(f).length;
+  const tabs = [
+    { key: 'all', label: T().all, n: live.length },
+    { key: 'indirim', label: T().indirim, n: count((p) => p.section === 'indirim') },
+    { key: 'soon', label: T().soon, n: count((p) => p.validFrom > todayIso) },
+    ...DATA.periods.filter((p) => p.section === 'aktuel' && p.validFrom)
+      .sort((a, b) => a.validFrom.localeCompare(b.validFrom))
+      .map((p) => ({ key: 'k:' + p.key, label: periodLabel(p), n: count((x) => x.periodKey === p.key) }))
+      .filter((t) => t.n > 0),
+  ];
+  $('chips').replaceChildren(...tabs.map((t) => {
+    const b = el('button', 'chip', t.label); b.type = 'button';
+    b.append(el('small', '', t.n)); b.setAttribute('aria-pressed', t.key === view);
+    b.onclick = () => setView(t.key);
+    return b;
+  }));
+  document.querySelectorAll('#nav button').forEach((b) => b.setAttribute('aria-current', b.dataset.view === view));
 }
 
 function render() {
   const q = lower($('q').value.trim());
-  let list = DATA.products.filter((p) =>
-    (current === 'all' || (current === 'indirim' ? p.section === 'indirim' : p.periodKey === current)) &&
-    (!q || lower(p.name + ' ' + (p.brand || '') + ' ' + (p.quantity || '')).includes(q)) &&
-    status(p)[0] !== 'bitti');
-  const disc = (p) => p.oldPrice ? 1 - p.price / p.oldPrice : 0;
+  const disc = (p) => (p.oldPrice ? 1 - p.price / p.oldPrice : 0);
   const sorters = {
-    disc: (a, b) => disc(b) - disc(a) || (a.validFrom || '').localeCompare(b.validFrom || '') || a.price - b.price,
-    asc: (a, b) => a.price - b.price, desc: (a, b) => b.price - a.price,
+    disc: (a, b) => disc(b) - disc(a) || a.validFrom.localeCompare(b.validFrom) || a.price - b.price,
+    asc: (a, b) => a.price - b.price,
+    desc: (a, b) => b.price - a.price,
+    date: (a, b) => b.validFrom.localeCompare(a.validFrom) || a.name.localeCompare(b.name, 'tr'),
     name: (a, b) => a.name.localeCompare(b.name, 'tr'),
   };
-  list.sort(sorters[$('sort').value]);
-  $('count').textContent = list.length + ' ürün';
-  if (!list.length) { $('grid').replaceChildren(el('div', 'empty', 'Sonuç bulunamadı.')); return; }
+  const list = DATA.products
+    .filter((p) => matches(p) && (!q || lower(`${p.name} ${p.brand || ''} ${p.quantity || ''}`).includes(q)))
+    .sort(sorters[sort]);
+  $('count').textContent = T().products(list.length);
+  if (!list.length) {
+    const e = el('div', 'empty'); e.append(icon('smiley-sad'), document.createTextNode(T().empty));
+    $('grid').replaceChildren(e); return;
+  }
   $('grid').replaceChildren(...list.map((p) => {
     const a = el('a', 'card'); a.href = p.url; a.target = '_blank'; a.rel = 'noopener';
-    const box = el('div', 'img'); const img = el('img'); img.loading = 'lazy'; img.decoding = 'async';
-    img.referrerPolicy = 'no-referrer'; img.src = p.image; img.alt = [p.brand, p.name].filter(Boolean).join(' ');
-    box.append(img);
-    if (p.oldPrice) box.append(el('div', 'pct', '%' + (p.discountPercent ?? Math.round(disc(p) * 100))));
+    const pic = el('div', 'pic');
+    const img = el('img'); img.loading = 'lazy'; img.decoding = 'async'; img.referrerPolicy = 'no-referrer';
+    img.src = p.image; img.alt = [p.brand, p.name].filter(Boolean).join(' ');
+    pic.append(img);
+    if (p.oldPrice) pic.append(el('span', 'badge', '−' + Math.round(disc(p) * 100) + '%'));
     const body = el('div', 'body');
+    const [st, txt] = status(p);
+    const s = el('span', 'status' + (st === 'soon' ? ' soon' : '')); s.append(icon(st === 'soon' ? 'clock' : 'check-circle', 'ph-bold'), document.createTextNode(txt));
+    body.append(s);
     if (p.brand) body.append(el('div', 'brand', p.brand));
     body.append(el('div', 'name', p.name));
-    if (p.quantity) body.append(el('div', 'qty', p.quantity));
-    const pr = el('div', 'prices'); pr.append(el('span', 'price', money(p.price)));
+    if (p.quantity) { const qn = el('div', 'qty'); qn.append(icon('package'), document.createTextNode(p.quantity)); body.append(qn); }
+    const row = el('div', 'row'); const pr = el('div', 'prices');
     if (p.oldPrice) pr.append(el('span', 'old', money(p.oldPrice)));
-    body.append(pr);
-    const [st, txt] = status(p); body.append(el('div', 'when ' + st, txt));
-    a.append(box, body); return a;
+    pr.append(el('span', 'price', money(p.price)));
+    const go = el('span', 'lime-btn sm'); go.append(icon('arrow-right', 'ph-bold'));
+    row.append(pr, go); body.append(row);
+    a.append(pic, body);
+    return a;
   }));
 }
 
-fetch('data/bim.json', { cache: 'no-cache' }).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((d) => {
-  DATA = d;
-  const t = new Date(d.fetchedAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul', dateStyle: 'medium', timeStyle: 'short' });
-  $('meta').textContent = `BİM · ${d.stats.products} ürün · güncellendi ${t}`;
-  renderTabs(); render();
-}).catch(() => { $('meta').textContent = ''; $('grid').replaceChildren(el('div', 'err', 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.')); });
-['q', 'sort'].forEach((id) => $(id).addEventListener('input', render));
+function setView(v) {
+  if (v === 'search') { $('q').focus(); window.scrollTo({ top: 0 }); return; }
+  if (v === 'stores') v = 'all';
+  view = v; renderChips(); render();
+  window.scrollTo({ top: $('chips').offsetTop - 12 });
+}
+
+document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => {
+  lang = b.dataset.lang; store.set('lang', lang); renderStatic(); if (DATA) { renderChips(); render(); }
+});
+document.querySelectorAll('#nav button').forEach((b) => b.onclick = () => setView(b.dataset.view));
+$('sortBtn').onclick = (e) => { e.preventDefault(); $('sortsheet').classList.toggle('open'); };
+$('aboutBtn').onclick = () => $('about').classList.toggle('open');
+$('q').addEventListener('input', () => DATA && render());
+
+renderStatic();
+fetch('data/bim.json', { cache: 'no-cache' })
+  .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then((data) => { DATA = data; renderStatic(); renderChips(); render(); })
+  .catch(() => { const e = el('div', 'empty'); e.append(icon('wifi-slash'), document.createTextNode(T().error)); $('grid').replaceChildren(e); });
 </script>
 </body>
 </html>
