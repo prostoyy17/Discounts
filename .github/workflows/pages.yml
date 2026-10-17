@@ -1,7 +1,7 @@
 name: Deploy site to GitHub Pages
-# Crawls BİM, validates the data, spot-checks it against product pages and
-# publishes the site. If any check fails nothing is deployed and the previous
-# version of the site stays online.
+# Crawls each store, validates the data, spot-checks it against product pages
+# and publishes the site. A store that fails keeps its last published data;
+# if no store has data nothing is deployed.
 on:
   push:
     branches: [master]
@@ -31,10 +31,12 @@ jobs:
       - run: npm ci
       - name: Unit tests
         run: npm test
-      - name: Crawl BİM
-        run: npm run crawl:bim
-      - name: Verify sample against product pages
-        run: npm run verify:bim -- --sample 12
+      - name: Crawl, verify and build data
+        # Stores are added here only after they passed a full manual check.
+        # A store whose crawl/verification fails keeps its last published data.
+        run: node scripts/update-all.js --only "${STORES}"
+        env:
+          STORES: bim
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

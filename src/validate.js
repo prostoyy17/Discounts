@@ -2,8 +2,12 @@
 // a crawl is rejected when anything structural is wrong, so a broken parser
 // never publishes garbage over the last good data.
 
-const IMAGE_HOSTS = { bim: ['cdn1.bim.com.tr', 'cdn2.bim.com.tr'] };
-const PAGE_HOSTS = { bim: ['www.bim.com.tr'] };
+const IMAGE_HOSTS = {
+  bim: ['cdn1.bim.com.tr', 'cdn2.bim.com.tr'],
+  sok: ['images.ceptesok.com'],
+  migros: ['images.migrosone.com'],
+};
+const PAGE_HOSTS = { bim: ['www.bim.com.tr'], sok: ['www.sokmarket.com.tr'], migros: ['www.migros.com.tr'] };
 
 const hostOf = (u) => { try { return new URL(u).host; } catch { return null; } };
 
@@ -20,7 +24,7 @@ export function productProblems(p) {
   if (p.section === 'indirim' && p.oldPrice == null) out.push('indirim ürününde eski fiyat yok');
   if (!p.image || !(IMAGE_HOSTS[p.store] ?? []).includes(hostOf(p.image))) out.push('görsel URL bozuk');
   if (!p.url || !(PAGE_HOSTS[p.store] ?? []).includes(hostOf(p.url))) out.push('ürün linki bozuk');
-  if (!p.validFrom) out.push('tarih çözülemedi');
+  if (p.store === 'bim' && !p.validFrom) out.push('tarih çözülemedi');
   return out;
 }
 
