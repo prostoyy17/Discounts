@@ -5,7 +5,7 @@
 //   node scripts/verify-sok.js [--sample N] [--all] [--only sok-1,sok-2]
 
 import fs from 'node:fs/promises';
-import { politeFetch, fetchText } from '../src/http.js';
+import { politeFetch, fetchText, imageProblem } from '../src/http.js';
 import { parseDetail } from '../src/sources/sok.js';
 
 const args = process.argv;
@@ -38,11 +38,8 @@ for (const p of pick) {
       if ((d.oldPrice ?? null) !== (p.oldPrice ?? null)) issues.push(`eski fiyat: liste ${p.oldPrice} / detay ${d.oldPrice}`);
     }
   } catch (e) { issues.push(`detay sayfası açılmadı: ${e.message}`); }
-  try {
-    const r = await politeFetch(p.image, { method: 'HEAD', delayMs: 300 });
-    const type = r.headers.get('content-type') ?? '';
-    if (!r.ok || !type.startsWith('image/')) issues.push(`görsel: HTTP ${r.status} ${type}`);
-  } catch (e) { issues.push(`görsel açılmadı: ${e.message}`); }
+  const imgIssue = await imageProblem(p.image);
+  if (imgIssue) issues.push(imgIssue);
   if (issues.length) failed++;
   console.log(`${issues.length ? '✗' : '✓'} [${p.category}] ${p.name} — ${p.price} ₺${p.oldPrice ? ` (eski ${p.oldPrice})` : ''}${issues.length ? '\n    ' + issues.join('\n    ') : ''}`);
 }

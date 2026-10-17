@@ -5,7 +5,7 @@
 //   node scripts/verify-bim.js [--sample N] [--all] [--only bim-1,bim-2]
 
 import fs from 'node:fs/promises';
-import { politeFetch, fetchText } from '../src/http.js';
+import { politeFetch, fetchText, imageProblem } from '../src/http.js';
 import { parseDetail } from '../src/sources/bim.js';
 
 const args = process.argv;
@@ -41,11 +41,8 @@ for (const p of pick) {
     if ((d.oldPrice ?? null) !== (p.oldPrice ?? null)) issues.push(`eski fiyat: liste ${p.oldPrice} / detay ${d.oldPrice}`);
     if (d.id && `bim-${d.id}` !== p.id) issues.push(`id: liste ${p.id} / detay ${d.id}`);
   } catch (e) { if (!e.shared) issues.push(`detay sayfası açılmadı: ${e.message}`); }
-  try {
-    const r = await politeFetch(p.image, { method: 'HEAD', delayMs: 500 });
-    const type = r.headers.get('content-type') ?? '';
-    if (!r.ok || !type.startsWith('image/')) issues.push(`görsel: HTTP ${r.status} ${type}`);
-  } catch (e) { issues.push(`görsel açılmadı: ${e.message}`); }
+  const imgIssue = await imageProblem(p.image);
+  if (imgIssue) issues.push(imgIssue);
   if (issues.length) failed++;
   console.log(`${issues.length ? '✗' : '✓'} [${p.periodLabel}] ${p.brand ?? ''} ${p.name} — ${p.price} ₺${issues.length ? '\n    ' + issues.join('\n    ') : ''}`);
 }

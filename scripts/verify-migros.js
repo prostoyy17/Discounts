@@ -5,7 +5,7 @@
 //   node scripts/verify-migros.js [--sample N] [--all] [--only migros-1,…]
 
 import fs from 'node:fs/promises';
-import { politeFetch, fetchText } from '../src/http.js';
+import { politeFetch, fetchText, imageProblem } from '../src/http.js';
 import { detailUrl, parseDetail } from '../src/sources/migros.js';
 
 const args = process.argv;
@@ -43,11 +43,8 @@ for (const p of pick) {
       if (!r.ok) issues.push(`ürün sayfası: HTTP ${r.status}`);
     } catch (e) { issues.push(`ürün sayfası açılmadı: ${e.message}`); }
   }
-  try {
-    const r = await politeFetch(p.image, { method: 'HEAD', delayMs: 300 });
-    const type = r.headers.get('content-type') ?? '';
-    if (!r.ok || !type.startsWith('image/')) issues.push(`görsel: HTTP ${r.status} ${type}`);
-  } catch (e) { issues.push(`görsel açılmadı: ${e.message}`); }
+  const imgIssue = await imageProblem(p.image);
+  if (imgIssue) issues.push(imgIssue);
   if (issues.length) failed++;
   console.log(`${issues.length ? '✗' : '✓'} [${p.category}] ${p.name} — ${p.price} ₺${p.oldPrice ? ` (eski ${p.oldPrice}${p.priceCondition === 'money' ? ', Money' : ''})` : ''}${issues.length ? '\n    ' + issues.join('\n    ') : ''}`);
 }
