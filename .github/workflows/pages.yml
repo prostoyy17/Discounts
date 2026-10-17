@@ -36,7 +36,7 @@ jobs:
         # A store whose crawl/verification fails keeps its last published data.
         run: node scripts/update-all.js --only "${STORES}"
         env:
-          STORES: bim
+          STORES: bim,migros
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
