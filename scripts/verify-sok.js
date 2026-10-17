@@ -34,8 +34,16 @@ for (const p of pick) {
     else {
       if (d.id !== p.id) issues.push(`id: liste ${p.id} / detay ${d.id}`);
       if (norm(d.name) !== norm(p.name)) issues.push(`ad: liste "${p.name}" / detay "${d.name}"`);
-      if (d.price !== p.price) issues.push(`fiyat: liste ${p.price} / detay ${d.price}`);
-      if ((d.oldPrice ?? null) !== (p.oldPrice ?? null)) issues.push(`eski fiyat: liste ${p.oldPrice} / detay ${d.oldPrice}`);
+      // Size variants can be priced differently; then the listing must match
+      // one of the variants that is in stock.
+      const inStock = (d.variantPrices ?? []).filter((v) => v.inStock);
+      const match = d.price === p.price && (d.oldPrice ?? null) === (p.oldPrice ?? null)
+        || inStock.some((v) => v.price === p.price && (v.oldPrice ?? null) === (p.oldPrice ?? null));
+      if (!match) {
+        if (d.price !== p.price) issues.push(`fiyat: liste ${p.price} / detay ${d.price}`);
+        if ((d.oldPrice ?? null) !== (p.oldPrice ?? null)) issues.push(`eski fiyat: liste ${p.oldPrice} / detay ${d.oldPrice}`);
+        if (inStock.length) issues.push(`stoktaki bedenler: ${inStock.map((v) => `${v.key}=${v.price}`).join(', ')}`);
+      }
     }
   } catch (e) { issues.push(`detay sayfası açılmadı: ${e.message}`); }
   const imgIssue = await imageProblem(p.image);

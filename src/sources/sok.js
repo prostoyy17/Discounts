@@ -125,5 +125,30 @@ export function parseDetail(html) {
   if (!data) return null;
   // Detail pages carry the live price on "initialVariant", not on productData.
   const variant = jsonAfterKey(flight, 'initialVariant');
-  return normalize({ ...data, prices: variant?.prices ?? data.prices, hasStock: variant?.hasStock ?? data.hasStock });
+  // Products with sizes/colours nest it one level deeper: { key, hasStock, value: { prices } }.
+  // ("prices" can also be a "$1a"-style flight reference string; only objects count.)
+  const isPrices = (x) => x && typeof x === 'object' && x.discounted;
+  const live = isPrices(variant?.prices) ? variant
+    : isPrices(variant?.value?.prices) ? { ...variant.value, hasStock: variant.hasStock } : null;
+  const rec = normalize({ ...data, prices: live?.prices ?? data.prices, hasStock: live?.hasStock ?? data.hasStock });
+  rec.variantPrices = variantPrices(flight);
+  return rec;
+}
+
+/**
+ * Size/colour variants on a detail page: [{ key, inStock, price, oldPrice }].
+ * Prices can differ by size (shoes); the listing shows the in-stock price.
+ */
+export function variantPrices(flight) {
+  const out = new Map();
+  const re = /\{"key":"([^"]+)","hasStock":(true|false),"value":\{/g;
+  for (const m of flight.matchAll(re)) {
+    let v;
+    try { v = jsonAfterKey(flight.slice(m.index), 'value'); } catch { continue; }
+    const pr = v?.prices;
+    if (!pr || typeof pr !== 'object' || !pr.discounted) continue;
+    const price = pr.discounted.value, original = pr.original?.value ?? price;
+    out.set(m[1], { key: m[1], inStock: m[2] === 'true', price, oldPrice: original > price ? original : null });
+  }
+  return [...out.values()];
 }

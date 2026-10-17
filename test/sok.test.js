@@ -54,3 +54,17 @@ test('Ekstra categories found and deduplicated by id', () => {
 test('flight data decodes Turkish text correctly', () => {
   assert.ok(flightData(fx('detail-dimes.html')).includes('Süt ve Süt Ürünleri'));
 });
+
+test('detail page with size variants: price nested in initialVariant.value', () => {
+  const d = parseDetail(fx('detail-variant-crocs.html'));
+  assert.equal(d.id, 'sok-449964');
+  assert.equal(d.price, 799);
+  assert.equal(d.oldPrice, null);
+});
+
+test('size variants with different prices are all read', () => {
+  const d = parseDetail(fx('detail-variant-prices-columbia.html'));
+  const inStock = d.variantPrices.filter((v) => v.inStock).map((v) => v.price);
+  assert.ok(inStock.includes(5499));
+  assert.ok(d.variantPrices.some((v) => !v.inStock && v.price === 4499));
+});
