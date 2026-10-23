@@ -18,10 +18,12 @@ import * as cheerio from 'cheerio';
 export const BASE = 'https://vkusvill.ru';
 export const pageUrl = (n, section = '') => `${BASE}/offers/${section ? section + '/' : ''}${n > 1 ? `?PAGEN_1=${n}` : ''}`;
 
-/** Section slugs of /offers/ (dairy, bakery, …) from the filter links. */
+/** Section slugs of /offers/ (dairy, bakery, …) from the catalogue menu.
+ *  Tabs like "6 скидок" (prod6) are personal and empty without login, so
+ *  only menu links count. Ready food and alcohol have no section at all. */
 export function parseSections(html) {
   const out = new Set();
-  for (const m of html.matchAll(/href="\/offers\/([a-z0-9-]+)\/"/g)) out.add(m[1]);
+  for (const m of html.matchAll(/href="\/offers\/([a-z0-9-]+)\/"[^>]*class="VVCatalog2020Submenu__Link/g)) out.add(m[1]);
   return [...out];
 }
 

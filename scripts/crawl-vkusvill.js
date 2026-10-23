@@ -4,7 +4,7 @@
 //
 //   node scripts/crawl-vkusvill.js [--save-dir DIR] [--from-dir DIR]
 //
-// Walks the main /offers/ list and every section list (/offers/<section>/).
+// Walks the main /offers/ list twice and every section list (/offers/<section>/).
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -21,10 +21,11 @@ const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.i
 const saveDir = arg('--save-dir');
 const fromDir = arg('--from-dir');
 const fileFor = (dir, n, sec) => path.join(dir, `offers_${sec ? sec + '_' : ''}${n}.html`);
-const get = async (n, sec = '') => {
-  if (fromDir) return fs.readFile(fileFor(fromDir, n, sec), 'utf8');
+const get = async (n, sec = '', pass = 1) => {
+  const file = (dir) => fileFor(dir, n, sec).replace(/\.html$/, pass > 1 ? `_p${pass}.html` : '.html');
+  if (fromDir) return fs.readFile(file(fromDir), 'utf8');
   const html = await fetchText(pageUrl(n, sec), { delayMs: 2500 }); // robots.txt: Crawl-delay 2
-  if (saveDir) { await fs.mkdir(saveDir, { recursive: true }); await fs.writeFile(fileFor(saveDir, n, sec), html); }
+  if (saveDir) { await fs.mkdir(saveDir, { recursive: true }); await fs.writeFile(file(saveDir), html); }
   return html;
 };
 
@@ -32,18 +33,21 @@ const fatal = [];
 const byId = new Map();
 const rejected = [];
 const warnings = [];
-const seenIn = new Map(); // id -> how many listings showed it
 let rows = 0, mainRows = 0;
 const mainIds = new Set();
+const sectionIds = new Set();
+const passIds = [];
 
 // The list has no stable sort, so items can shift between pages while we walk
-// it. We walk the main list AND every section list; the union is complete.
-async function walk(sec) {
+// it. We walk the main list twice AND every section list and take the union.
+// Ready food, vegetarian and alcohol have no section, so for them the two main
+// passes are the safety net.
+async function walk(sec, pass = 1) {
   let lastPage = 1, html1 = null;
   const ids = new Set();
   for (let n = 1; n <= lastPage; n++) {
     let html, res;
-    try { html = await get(n, sec); res = parseListing(html); }
+    try { html = await get(n, sec, pass); res = parseListing(html); }
     catch (e) { fatal.push(`${sec || 'ana'} s.${n}: ${e.message}`); break; }
     if (n === 1) { lastPage = res.lastPage; html1 = html; }
     if (res.cards !== res.products.length) fatal.push(`${sec || 'ana'} s.${n}: kart ${res.cards}, ürün ${res.products.length}`);
@@ -52,7 +56,7 @@ async function walk(sec) {
     if (!sec) mainRows += res.products.length;
     for (const p of res.products) {
       ids.add(p.id);
-      if (!sec) mainIds.add(p.id);
+      (sec ? sectionIds : mainIds).add(p.id);
       if (byId.has(p.id) || rejected.some((r) => r.id === p.id)) continue;
       if (sec && !p.category) p.category = null;
       const probs = productProblems(p);
@@ -62,8 +66,8 @@ async function walk(sec) {
       byId.set(p.id, p);
     }
   }
-  for (const id of ids) seenIn.set(id, (seenIn.get(id) ?? 0) + 1);
-  console.log(`${(sec || 'ANA LİSTE').padEnd(36)} ${lastPage} sayfa, ${ids.size} ürün`);
+  if (!sec) passIds.push(ids);
+  console.log(`${(sec || `ANA LİSTE (${pass}. tur)`).padEnd(36)} ${lastPage} sayfa, ${ids.size} ürün`);
   return html1;
 }
 
@@ -71,16 +75,19 @@ const firstHtml = await walk('');
 const sections = firstHtml ? parseSections(firstHtml) : [];
 if (sections.length < 10) fatal.push(`bölüm sayısı şüpheli: ${sections.length}`);
 for (const sec of sections) await walk(sec);
+await walk('', 2);
 
 const products = [...byId.values()];
-const onlyMain = [...mainIds].filter((id) => (seenIn.get(id) ?? 0) === 1).length;
-const onlySections = products.length - [...mainIds].filter((id) => byId.has(id)).length;
-const repeated = mainRows - mainIds.size;
+const onlyMain = [...mainIds].filter((id) => !sectionIds.has(id)).length; // e.g. ready food: no section
+const onlySections = [...sectionIds].filter((id) => !mainIds.has(id)).length;
+const onlyOnePass = [...mainIds].filter((id) => !passIds.every((s) => s.has(id))).length;
+const repeated = mainRows - passIds.reduce((a, s) => a + s.size, 0);
 if (products.length < MIN_PRODUCTS) fatal.push(`çok az ürün: ${products.length}`);
 if (rows && rejected.length / rows > MAX_BAD_RATIO) fatal.push(`hatalı ürün oranı yüksek: ${rejected.length}/${rows}`);
-// Both views must agree: anything only one of them shows is a sign of a
-// layout change, not of normal page shifting.
-if ((onlyMain + onlySections) / products.length > 0.05) fatal.push(`ana liste ve bölümler uyuşmuyor: sadece ana ${onlyMain}, sadece bölüm ${onlySections}`);
+// Normal page shifting loses a handful of items per pass; many items missing
+// from the main list or from one pass means the layout or paging changed.
+if (onlySections / products.length > 0.05) fatal.push(`ana liste bölümlerdeki ${onlySections} ürünü göstermedi`);
+if (onlyOnePass / products.length > 0.05) fatal.push(`ana listenin iki turu uyuşmuyor: ${onlyOnePass} ürün tek turda`);
 
 for (const w of warnings) console.warn(`  ! ${w.name} | ${w.warnings.join(', ')}`);
 for (const r of rejected) console.warn(`  ✗ s.${r.page} | ${r.name} | ${r.problems.join(', ')}`);
@@ -88,9 +95,9 @@ if (fatal.length) { console.error('\nTARAMA REDDEDİLDİ:\n - ' + fatal.join('\n
 
 const data = {
   store: 'vkusvill', storeName: 'ВкусВилл', source: `${BASE}/offers/`, fetchedAt: new Date().toISOString(),
-  stats: { products: products.length, rows, mainRepeated: repeated, onlyMain, onlySections, sections: sections.length, rejected: rejected.length, warnings: warnings.length },
+  stats: { products: products.length, rows, mainRepeated: repeated, onlyMain, onlySections, onlyOnePass, sections: sections.length, rejected: rejected.length, warnings: warnings.length },
   warnings, rejected, products,
 };
 await fs.mkdir(path.dirname(OUT), { recursive: true });
 await fs.writeFile(OUT, JSON.stringify(data));
-console.log(`\n✓ ${products.length} ürün (ana listede tekrar ${repeated}, sadece ana ${onlyMain}, sadece bölümlerde ${onlySections}, ${rejected.length} reddedildi) → ${path.relative(process.cwd(), OUT)}`);
+console.log(`\n✓ ${products.length} ürün (ana listede tekrar ${repeated}, bölümsüz ${onlyMain}, ana listede yok ${onlySections}, tek turda ${onlyOnePass}, ${rejected.length} reddedildi) → ${path.relative(process.cwd(), OUT)}`);

@@ -37,6 +37,7 @@ test('first offers page: 24 cards, 30 pages, sections', () => {
   assert.deepEqual(dealTypes(tort), ['discount', 'card']);
   assert.equal(tort.unit, 'шт');
   assert.ok(parseSections(html).includes('molochnye-produkty'));
+  assert.ok(!parseSections(html).includes('prod6')); // personal tab, empty without login
   assert.equal(pageUrl(3, 'syry'), 'https://vkusvill.ru/offers/syry/?PAGEN_1=3');
 });
 
