@@ -16,9 +16,10 @@ import { dealTypes } from '../src/deals.js';
 
 const META = {
   // every: planned crawl interval in hours (see .github/workflows/pages.yml)
-  bim: { name: 'BİM', every: 8, logo: 'https://cdn2.bim.com.tr/templates/images/bim-logo-single.png', img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
-  sok: { name: 'ŞOK', every: 24, logo: 'https://images.ceptesok.com/logos/service-types/market-logo.svg', img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
-  migros: { name: 'Migros', every: 48, logo: 'https://www.migros.com.tr/assets/images/seo/new/apple-touch-icon-152x152.png', img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
+  bim: { name: 'BİM', country: 'tr', currency: 'TRY', every: 8, logo: 'https://cdn2.bim.com.tr/templates/images/bim-logo-single.png', img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
+  sok: { name: 'ŞOK', country: 'tr', currency: 'TRY', every: 24, logo: 'https://images.ceptesok.com/logos/service-types/market-logo.svg', img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
+  migros: { name: 'Migros', country: 'tr', currency: 'TRY', every: 48, logo: 'https://www.migros.com.tr/assets/images/seo/new/apple-touch-icon-152x152.png', img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
+  vkusvill: { name: 'ВкусВилл', country: 'ru', currency: 'RUB', every: 24, logo: 'https://vkusvill.ru/apple-touch-icon.png?v=1', img: 'https://img.vkusvill.ru/pim/images/site/', url: 'https://vkusvill.ru/' },
 };
 
 // Same promo rules as the current parsers, so data published by an older
@@ -36,6 +37,8 @@ function compact(p, meta) {
   if (p.quantity) o.q = p.quantity;
   if (p.oldPrice) { o.o = p.oldPrice; o.d = p.discountPercent; }
   if (p.priceCondition) o.m = p.priceCondition;
+  if (p.onlineOnly) o.on = 1;
+  if (p.unit && p.unit !== 'шт') o.un = p.unit; // price per kg etc.
   if (p.promotions?.length) o.pr = p.promotions;
   if (p.validFrom) o.vf = p.validFrom;
   if (p.validTo) o.vt = p.validTo;
@@ -59,7 +62,7 @@ export async function buildSiteData(storeIds, dir = 'site/data') {
     const all = data.products.filter((p) => p.inStock !== false).map((p) => ({ ...p, promotions: cleanPromos(p.promotions) }));
     const list = all.filter((p) => dealTypes(p).length);
     stores.push({
-      id, name: meta.name, logo: meta.logo, img: meta.img, url: meta.url, source: data.source,
+      id, name: meta.name, country: meta.country, currency: meta.currency, logo: meta.logo, img: meta.img, url: meta.url, source: data.source,
       fetchedAt: data.fetchedAt, stale: data.stale ?? null, every: meta.every, trackingSince: data.trackingSince ?? null,
       count: list.length, discounts: list.filter((p) => p.oldPrice).length, catalogSize: all.length,
     });

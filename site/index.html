@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#F5F5F3">
-<title>RevoSell — скидки магазинов Турции</title>
+<title>RevoSell — скидки и акции магазинов</title>
 <meta name="description" content="RevoSell: скидки и акции BİM, ŞOK и Migros в одном месте.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23D7FF00%22/%3E%3Ctext x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-weight=%22900%22%3ER%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://images.migrosone.com">
 <link rel="preconnect" href="https://images.ceptesok.com">
 <link rel="preconnect" href="https://cdn1.bim.com.tr">
+<link rel="preconnect" href="https://img.vkusvill.ru">
 <style>
 :root{
   --bg:#F5F5F3; --surface:#FFFFFF; --mint:#C5E2DF; --lime:#D7FF00; --ink:#000000;
@@ -108,7 +109,7 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 .dot.ok{background:#2fbf71}.dot.warn{background:#f5b300}.dot.bad{background:#e5484d}
 .store-btn .n{font-weight:700;font-size:.9rem}
 .lang{display:flex;background:var(--surface);border-radius:999px;padding:4px;box-shadow:var(--shadow);align-self:flex-start}
-.lang button{padding:7px 14px;border-radius:999px;font-weight:600;font-size:.82rem;color:var(--muted)}
+.lang button{white-space:nowrap;padding:7px 12px;border-radius:999px;font-weight:600;font-size:.82rem;color:var(--muted)}
 .lang button[aria-pressed=true]{background:var(--mint);color:var(--ink)}
 .drawer small{color:var(--muted);font-size:.75rem;line-height:1.4}
 
@@ -151,9 +152,9 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 <aside class="drawer" id="drawer" aria-label="Меню">
   <div class="drawer-head">
     <b id="menuTitle"></b>
-    <div class="lang" role="group" aria-label="Язык">
-      <button type="button" data-lang="ru">RU</button>
-      <button type="button" data-lang="tr">TR</button>
+    <div class="lang" role="group" aria-label="Страна">
+      <button type="button" data-country="tr">🇹🇷 TR</button>
+      <button type="button" data-country="ru">🇷🇺 RU</button>
     </div>
     <button class="burger" type="button" id="closeBtn" aria-label="Закрыть"><i class="ph-bold ph-x"></i></button>
   </div>
@@ -170,7 +171,8 @@ const I18N = {
     types: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк Win', clearance: 'Распродажа', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Другие акции' },
     allTypes: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк', clearance: 'Распродажа', catalog: 'Каталог акций', goodprice: 'Выгодная цена', promo: 'Другие акции' },
     bimIndirim: 'Скидки İndirim', onSale: 'Уже в продаже', soon: 'Скоро', fresh: 'Новые', ekstra: 'Ekstra (техника, одежда)',
-    money: 'С картой Money', newBadge: 'НОВОЕ',
+    money: 'С картой Money', loyalty: 'По карте лояльности', online: 'Только онлайн', newBadge: 'НОВОЕ',
+    vv: { card: 'По карте', multi: 'При покупке от 2 шт', clearance: 'Исчезающий вид', online: 'Только онлайн' },
     startsIn: (n) => n <= 0 ? 'Начинается сегодня' : n === 1 ? 'Начнётся завтра' : `Начнётся через ${n} ${plural(n, ['день', 'дня', 'дней'])}`,
     endsIn: (n) => n <= 0 ? 'Последний день' : n === 1 ? 'Остался 1 день' : `Осталось ${n} ${plural(n, ['день', 'дня', 'дней'])}`,
     since: (d) => `В продаже с ${d}`, seenSince: (d) => `Акция с ${d}`, foundAgo: (t) => `Найдено ${t}`,
@@ -178,7 +180,7 @@ const I18N = {
     every: (h) => h === 1 ? 'проверка каждый час' : h % 24 === 0 ? (h === 24 ? 'проверка раз в день' : `проверка раз в ${h / 24} дня`) : `проверка каждые ${h} ч`,
     updated: (t) => `обновлено ${t}`, stale: 'не обновилось — показаны прошлые данные',
     note: 'Цены и фото принадлежат магазинам; по клику открывается страница товара в магазине. У Migros скидочная цена действует с бесплатной картой Money. В магазине цена может отличаться, количество ограничено.',
-    footer: 'Источники: bim.com.tr · sokmarket.com.tr · migros.com.tr · убрать данные: bezzimeni17@gmail.com',
+    footer: 'Цены и фото принадлежат магазинам · убрать данные: bezzimeni17@gmail.com',
     locale: 'ru-RU',
   },
   tr: {
@@ -189,7 +191,8 @@ const I18N = {
     types: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Win Para', clearance: 'Stok eritme', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Diğer kampanyalar' },
     allTypes: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Para iade', clearance: 'Stok eritme', catalog: 'Kampanya kataloğu', goodprice: 'İyi fiyat', promo: 'Diğer kampanyalar' },
     bimIndirim: 'İndirim', onSale: 'Satışta', soon: 'Yakında', fresh: 'Yeni', ekstra: 'Ekstra',
-    money: "Money Kart'la", newBadge: 'YENİ',
+    money: "Money Kart'la", loyalty: 'Sadakat kartıyla', online: 'Sadece online', newBadge: 'YENİ',
+    vv: { card: 'Kartla', multi: '2 adet alımda', clearance: 'Son ürünler', online: 'Sadece online' },
     startsIn: (n) => n <= 0 ? 'Bugün başlıyor' : n === 1 ? 'Yarın başlıyor' : `${n} gün sonra başlıyor`,
     endsIn: (n) => n <= 0 ? 'Son gün' : `${n} gün kaldı`,
     since: (d) => `${d} tarihinden beri satışta`, seenSince: (d) => `${d} tarihinden beri`, foundAgo: (t) => `${t} bulundu`,
@@ -197,7 +200,7 @@ const I18N = {
     every: (h) => h === 1 ? 'her saat kontrol' : h % 24 === 0 ? (h === 24 ? 'günde bir kontrol' : `${h / 24} günde bir kontrol`) : `her ${h} saatte kontrol`,
     updated: (t) => `güncellendi ${t}`, stale: 'güncellenemedi — önceki veriler gösteriliyor',
     note: 'Fiyat ve görseller marketlere aittir; tıklayınca marketin ürün sayfası açılır. Migros indirimli fiyatları ücretsiz Money Kart ile geçerlidir. Mağazadaki fiyat farklı olabilir, stoklarla sınırlıdır.',
-    footer: 'Kaynaklar: bim.com.tr · sokmarket.com.tr · migros.com.tr · kaldırma talebi: bezzimeni17@gmail.com',
+    footer: 'Fiyat ve görseller marketlere aittir · kaldırma talebi: bezzimeni17@gmail.com',
     locale: 'tr-TR',
   },
 };
@@ -213,7 +216,10 @@ const minutesAgo = (iso) => Math.max(0, Math.round((Date.now() - Date.parse(iso)
 const PAGE = 48, NEW_HOURS = 48;
 
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
-let lang = store.get('lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'ru');
+// Country decides language and currency: Türkiye -> Turkish + ₺, Россия -> Russian + ₽.
+let country = store.get('country') || ((navigator.language || '').startsWith('ru') ? 'ru' : 'tr');
+const LANG_OF = { tr: 'tr', ru: 'ru' };
+let lang = LANG_OF[country];
 const state = { store: store.get('store') || 'all', chip: 'all', category: '', sort: 'disc', shown: PAGE };
 let DATA = null, STORES = {}, current = [];
 const LOADED = {}; // store id -> its deals, loaded on demand
@@ -222,7 +228,8 @@ const T = () => I18N[lang];
 const fmt = (opts) => new Intl.DateTimeFormat(T().locale, { timeZone: 'UTC', ...opts });
 const dayLabel = (iso) => fmt({ day: 'numeric', month: 'short' }).format(new Date(iso + 'T00:00:00Z'));
 const weekLabel = (iso) => fmt({ day: 'numeric', month: 'short', weekday: 'short' }).format(new Date(iso + 'T00:00:00Z'));
-const money = (n) => new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n) + ' ₺';
+const CUR = { TRY: ['tr-TR', ' ₺'], RUB: ['ru-RU', ' ₽'] };
+const money = (n, cur = 'TRY') => { const [loc, sym] = CUR[cur] || CUR.TRY; return new Intl.NumberFormat(loc, { maximumFractionDigits: 2 }).format(n) + sym; };
 const abs = (rel, base) => (rel == null ? null : rel.startsWith('!') ? rel.slice(1) : base + rel);
 
 const expired = (p) => p.vt && p.vt < todayIso();
@@ -240,16 +247,20 @@ function chipDefs() {
       defs.push(['pk:' + per.key, weekLabel(per.validFrom), (p) => p.pk === per.key]);
     return defs;
   }
-  const order = state.store === 'sok' ? ['discount', 'basket', 'cashback', 'multi', 'promo']
+  const order = state.store === 'vkusvill' ? ['card', 'multi', 'clearance', 'online']
+    : state.store === 'sok' ? ['discount', 'basket', 'cashback', 'multi', 'promo']
     : state.store === 'migros' ? ['card', 'multi', 'basket', 'clearance', 'catalog', 'goodprice', 'promo']
     : ['discount', 'card', 'multi', 'basket', 'cashback', 'clearance', 'catalog', 'goodprice', 'promo'];
   const labels = state.store === 'all' ? t.allTypes : t.types;
-  const defs = [['all', t.all, () => true], ...order.map((k) => [k, labels[k], (p) => p.t.includes(k)]), ['fresh', t.fresh, isNew]];
+  const has = (k) => (k === 'online' ? (p) => p.on : k === 'card' ? (p) => p.t.includes('card') : (p) => p.t.includes(k));
+  const label = (k) => ((state.store === 'vkusvill' || country === 'ru') && t.vv[k]) || labels[k];
+  const defs = [['all', t.all, () => true], ...order.map((k) => [k, label(k), has(k)]), ['fresh', t.fresh, isNew]];
   if (state.store === 'sok') defs.push(['ekstra', t.ekstra, (p) => p.e]);
   if (state.store === 'all') defs.push(['soon', t.soon, future]);
+  if (state.store === 'all' && country === 'ru') defs.splice(1, defs.length, ...defs.slice(1).filter((d) => ['discount', 'card', 'multi', 'clearance', 'fresh'].includes(d[0])));
   return defs;
 }
-const inStore = (p) => !expired(p) && (state.store === 'all' || p.s === state.store);
+const inStore = (p) => !expired(p) && (state.store === 'all' ? (STORES[p.s].country || 'tr') === country : p.s === state.store);
 const chipFilter = () => { const d = chipDefs(); return (d.find((x) => x[0] === state.chip) || d[0])[2]; };
 
 function renderStatic() {
@@ -259,7 +270,7 @@ function renderStatic() {
   $('more').textContent = T().more;
   $('menuTitle').textContent = T().menu;
   $('storeTitle').textContent = STORES[state.store] ? '· ' + STORES[state.store].name : '';
-  document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.country === country));
   $('sortsheet').replaceChildren(...Object.entries(T().sort).map(([k, label]) => {
     const b = el('button', 'chip', label); b.type = 'button'; b.setAttribute('aria-pressed', k === state.sort);
     b.onclick = () => {
@@ -284,7 +295,7 @@ function freshness(s) {
 function renderMenu() {
   // Counts from loaded deals when we have them, else from stores.json.
   const countOf = (s) => LOADED[s.id] ? LOADED[s.id].filter((p) => !expired(p)).length : s.count;
-  const per = DATA.stores.map((s) => ({ id: s.id, name: s.name, ico: s.name.slice(0, 1), n: countOf(s), s }));
+  const per = countryStores().map((s) => ({ id: s.id, name: s.name, ico: s.name.slice(0, 1), n: countOf(s), s }));
   const rows = [{ id: 'all', name: T().allStores, ico: null, n: per.reduce((a, r) => a + r.n, 0) }, ...per];
   $('storeList').replaceChildren(...rows.map((r) => {
     const b = el('button', 'store-btn'); b.type = 'button'; b.setAttribute('aria-current', state.store === r.id);
@@ -322,14 +333,15 @@ function renderChips() {
 
 function tagsFor(p) {
   const out = [], t = T(), today = todayIso();
-  if (p.s === 'bim') {
-    if (future(p)) out.push(['soon', 'clock', t.startsIn(daysBetween(today, p.vf))]);
-    else if (p.vt) { const left = daysBetween(today, p.vt); out.push([left <= 1 ? 'end' : '', 'hourglass-medium', t.endsIn(left)]); }
-    else if (p.vf) out.push(['', 'check-circle', t.since(dayLabel(p.vf))]);
-  } else if (p.fs) {
+  if (future(p)) out.push(['soon', 'clock', t.startsIn(daysBetween(today, p.vf))]);
+  else if (p.vt) { const left = daysBetween(today, p.vt); out.push([left <= 1 ? 'end' : '', 'hourglass-medium', t.endsIn(left)]); }
+  else if (p.vf) out.push(['', 'check-circle', t.since(dayLabel(p.vf))]);
+  else if (p.fs) {
     out.push(['seen', 'clock-counter-clockwise', isNew(p) ? t.foundAgo(t.ago(minutesAgo(p.fs))) : t.seenSince(dayLabel(istDate(p.fs)))]);
   }
   if (p.m === 'money') out.push(['money', 'credit-card', t.money]);
+  if (p.m === 'loyalty') out.push(['money', 'credit-card', t.loyalty]);
+  if (p.on) out.push(['seen', 'globe', t.online]);
   for (const pr of p.pr || []) out.push(['promo', 'gift', pr]);
   return out;
 }
@@ -354,8 +366,8 @@ function card(p) {
   if (p.b) body.append(el('div', 'brand', p.b));
   body.append(el('div', 'name', p.n));
   const row = el('div', 'row'); const pr = el('div', 'prices');
-  if (p.o) pr.append(el('span', 'old', money(p.o)));
-  pr.append(el('span', 'price', money(p.p)));
+  if (p.o) pr.append(el('span', 'old', money(p.o, s.currency)));
+  pr.append(el('span', 'price', money(p.p, s.currency) + (p.un ? '/' + p.un : '')));
   const go = el('span', 'lime-btn sm'); go.append(icon('arrow-right', 'ph-bold'));
   row.append(pr, go); body.append(row);
   a.append(pic, body);
@@ -389,14 +401,15 @@ function showMore() {
 }
 
 function setStore(id) {
-  state.store = id === 'all' || STORES[id] ? id : 'all'; store.set('store', state.store);
+  state.store = id !== 'all' && STORES[id] && (STORES[id].country || 'tr') === country ? id : 'all'; store.set('store', state.store);
   state.chip = 'all'; state.category = ''; state.shown = PAGE;
   renderStatic(); window.scrollTo({ top: 0 });
   show();
 }
 
 // Downloads the deal files the current view needs (once each), then renders.
-const needed = () => (state.store === 'all' ? DATA.stores.map((s) => s.id) : [state.store]);
+const countryStores = () => DATA.stores.filter((s) => (s.country || 'tr') === country);
+const needed = () => (state.store === 'all' ? countryStores().map((s) => s.id) : [state.store]);
 function load(id) {
   if (LOADED[id]) return LOADED[id];
   const s = STORES[id];
@@ -419,13 +432,17 @@ function show() {
     renderMenu(); renderChips(); render();
   }).catch(showError);
   // Warm the other stores in the background so switching is instant.
-  if (state.store !== 'all') setTimeout(() => DATA.stores.forEach((x) => load(x.id)?.catch?.(() => {})), 1500);
+  if (state.store !== 'all') setTimeout(() => countryStores().forEach((x) => load(x.id)?.catch?.(() => {})), 1500);
 }
 function showError() { const e = el('div', 'empty'); e.append(icon('wifi-slash'), document.createTextNode(T().error)); $('grid').replaceChildren(e); }
 const openMenu = () => document.body.classList.add('menu');
 const closeMenu = () => document.body.classList.remove('menu');
 
-document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => { lang = b.dataset.lang; store.set('lang', lang); renderStatic(); if (DATA) show(); });
+document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => {
+  if (b.dataset.country === country) return;
+  country = b.dataset.country; lang = LANG_OF[country]; store.set('country', country);
+  setStore('all');
+});
 $('menuBtn').onclick = openMenu; $('closeBtn').onclick = closeMenu; $('scrim').onclick = closeMenu;
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 $('sortBtn').onclick = (e) => { e.preventDefault(); $('sortsheet').classList.toggle('open'); };
@@ -440,7 +457,7 @@ fetch('data/stores.json', { cache: 'no-cache' })
   .then((data) => {
     DATA = { ...data, products: [] };
     for (const s of data.stores) STORES[s.id] = { every: 6, ...s };
-    if (state.store !== 'all' && !STORES[state.store]) state.store = 'all';
+    if (state.store !== 'all' && (!STORES[state.store] || (STORES[state.store].country || 'tr') !== country)) state.store = 'all';
     renderStatic(); show();
   })
   .catch(showError);

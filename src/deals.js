@@ -18,10 +18,10 @@
 export const DEAL_TYPES = ['discount', 'card', 'multi', 'basket', 'cashback', 'clearance', 'catalog', 'goodprice', 'promo'];
 
 const RULES = [
-  ['multi', /\d+\s*al\s*\d+\s*öde|\d\.?\s*si\s*%\s*\d+|alana\s+\d+\s+bedava|ikincisi\s*%|\d+\s*öde\s*\d+'?\S*\s+iade/],
+  ['multi', /\d+\s*al\s*\d+\s*öde|\d\.?\s*si\s*%\s*\d+|alana\s+\d+\s+bedava|ikincisi\s*%|\d+\s*öde\s*\d+'?\S*\s+iade|при покупке от/],
   ['basket', /sepette|üzeri\s+alışverişte|tl\s+üzeri/i],
   ['cashback', /win\s*para/i],
-  ['clearance', /stokları\s+bitiriyoruz|kapış\s+kapış/i],
+  ['clearance', /stokları\s+bitiriyoruz|kapış\s+kapış|исчезающий вид/],
   ['catalog', /^migroskop$/i],
   ['goodprice', /^iyi\s+fiyat$/i],
 ];
@@ -39,7 +39,7 @@ export function dealTypes(p) {
   const out = new Set();
   if (p.oldPrice && p.oldPrice > p.price) {
     out.add('discount');
-    if (p.priceCondition === 'money') out.add('card');
+    if (p.priceCondition === 'money' || p.priceCondition === 'loyalty') out.add('card');
   }
   if (p.store === 'bim' && p.section === 'aktuel') out.add('catalog');
   for (const label of p.promotions ?? []) out.add(promoType(label));

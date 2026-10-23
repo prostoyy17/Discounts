@@ -20,6 +20,7 @@ const STORES = [
   { id: 'bim', crawl: 'scripts/crawl-bim.js', verify: 'scripts/verify-bim.js' },
   { id: 'sok', crawl: 'scripts/crawl-sok.js', verify: 'scripts/verify-sok.js' },
   { id: 'migros', crawl: 'scripts/crawl-migros.js', verify: 'scripts/verify-migros.js' },
+  { id: 'vkusvill', crawl: 'scripts/crawl-vkusvill.js', verify: 'scripts/verify-vkusvill.js' },
 ];
 
 const args = process.argv;

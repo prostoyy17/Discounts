@@ -8,18 +8,19 @@ on:
   schedule:
     # Each store on its own rhythm (UTC). The repository is private, so runs
     # are kept inside the free Actions minutes (~55 min/day): BİM every 8 h,
-    # ŞOK daily, Migros every 2 days. If the repo becomes public (unlimited
+    # ŞOK daily, Migros every 2 days, ВкусВилл daily (08:37 MSK). If the repo becomes public (unlimited
     # minutes) switch to: BİM '7 * * * *', ŞOK '17 */3 * * *', Migros
     # '27 */6 * * *'. Keep the strings in sync with the "Pick stores" step and
     # with "every" in scripts/build-site-data.js.
     - cron: '7 */8 * * *'
     - cron: '17 3 * * *'
     - cron: '27 4 */2 * *'
+    - cron: '37 5 * * *'
   workflow_dispatch:
     inputs:
       stores:
         description: 'Stores to crawl (comma separated)'
-        default: 'bim,sok,migros'
+        default: 'bim,sok,migros,vkusvill'
 permissions:
   contents: read
   pages: write
@@ -51,7 +52,8 @@ jobs:
             '7 */8 * * *')  echo "stores=bim" >> "$GITHUB_OUTPUT" ;;
             '17 3 * * *')   echo "stores=sok" >> "$GITHUB_OUTPUT" ;;
             '27 4 */2 * *') echo "stores=migros" >> "$GITHUB_OUTPUT" ;;
-            *)              echo "stores=${{ inputs.stores || 'bim,sok,migros' }}" >> "$GITHUB_OUTPUT" ;;
+            '37 5 * * *')   echo "stores=vkusvill" >> "$GITHUB_OUTPUT" ;;
+            *)              echo "stores=${{ inputs.stores || 'bim,sok,migros,vkusvill' }}" >> "$GITHUB_OUTPUT" ;;
           esac
       - name: Crawl, verify and build data
         # Crawls the picked stores; the others keep their live data. A store
@@ -64,7 +66,7 @@ jobs:
         if: github.event_name == 'push'
         run: node scripts/update-all.js --reuse-published --only "${STORES}"
         env:
-          STORES: bim,sok,migros
+          STORES: bim,sok,migros,vkusvill
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
