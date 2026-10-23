@@ -81,8 +81,7 @@ footer{color:var(--muted);font-size:.75rem;padding:24px 0 8px;text-align:center}
 .drawer{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;bottom:calc(12px + env(safe-area-inset-bottom));width:min(360px,calc(100vw - 48px));background:var(--bg);z-index:21;border-radius:30px;transform:translateX(calc(100% + 24px));visibility:hidden;transition:transform .25s ease,visibility 0s .25s;padding:16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.18)}
 body.menu .scrim{opacity:1;pointer-events:auto}
 body.menu .drawer{transform:none;visibility:visible;transition:transform .25s ease}
-.drawer-foot{margin-top:auto;background:var(--surface);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
-.drawer-foot .lang{box-shadow:none;background:var(--bg)}
+.drawer-foot{margin-top:auto;display:flex;justify-content:center}
 .drawer-head{display:flex;align-items:center;justify-content:space-between}
 .drawer-head b{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.2rem;text-transform:uppercase}
 .store-list{display:flex;flex-direction:column;gap:8px}
