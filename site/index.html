@@ -166,7 +166,7 @@ const I18N = {
     search: 'Найти товар или бренд…', menu: 'Магазины', allStores: 'Все магазины', all: 'Все акции', category: 'Все категории',
     deals: (n) => `${n.toLocaleString('ru-RU')} ${plural(n, ['акция', 'акции', 'акций'])}`,
     more: 'Показать ещё', empty: 'Ничего не найдено', error: 'Не удалось загрузить данные. Попробуйте позже.',
-    sort: { disc: 'Самая большая скидка', fresh: 'Сначала новые', asc: 'Сначала дешёвые', desc: 'Сначала дорогие', name: 'По названию' },
+    sort: { none: 'Без фильтров', disc: 'Самая большая скидка', fresh: 'Сначала новые', asc: 'Сначала дешёвые', desc: 'Сначала дорогие', name: 'По названию' },
     types: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк Win', clearance: 'Распродажа', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Другие акции' },
     allTypes: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк', clearance: 'Распродажа', catalog: 'Каталог акций', goodprice: 'Выгодная цена', promo: 'Другие акции' },
     bimIndirim: 'Скидки İndirim', onSale: 'Уже в продаже', soon: 'Скоро', fresh: 'Новые', ekstra: 'Ekstra (техника, одежда)',
@@ -185,7 +185,7 @@ const I18N = {
     search: 'Ürün veya marka ara…', menu: 'Marketler', allStores: 'Tüm marketler', all: 'Tüm fırsatlar', category: 'Tüm kategoriler',
     deals: (n) => `${n.toLocaleString('tr-TR')} fırsat`,
     more: 'Daha fazla göster', empty: 'Sonuç bulunamadı', error: 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.',
-    sort: { disc: 'En çok indirim', fresh: 'Önce yeniler', asc: 'Önce ucuz', desc: 'Önce pahalı', name: 'Ada göre' },
+    sort: { none: 'Filtresiz', disc: 'En çok indirim', fresh: 'Önce yeniler', asc: 'Önce ucuz', desc: 'Önce pahalı', name: 'Ada göre' },
     types: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Win Para', clearance: 'Stok eritme', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Diğer kampanyalar' },
     allTypes: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Para iade', clearance: 'Stok eritme', catalog: 'Kampanya kataloğu', goodprice: 'İyi fiyat', promo: 'Diğer kampanyalar' },
     bimIndirim: 'İndirim', onSale: 'Satışta', soon: 'Yakında', fresh: 'Yeni', ekstra: 'Ekstra',
@@ -262,7 +262,12 @@ function renderStatic() {
   document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang));
   $('sortsheet').replaceChildren(...Object.entries(T().sort).map(([k, label]) => {
     const b = el('button', 'chip', label); b.type = 'button'; b.setAttribute('aria-pressed', k === state.sort);
-    b.onclick = () => { state.sort = k; renderStatic(); render(); };
+    b.onclick = () => {
+      state.sort = k;
+      // "No filters": also drop the chip and the search, show everything as the store lists it.
+      if (k === 'none') { state.chip = 'all'; $('q').value = ''; state.shown = PAGE; renderChips(); }
+      renderStatic(); render();
+    };
     return b;
   }));
   if (DATA) renderMenu();
@@ -361,6 +366,7 @@ function render() {
   const words = fold($('q').value.trim()).split(/\s+/).filter(Boolean);
   const f = chipFilter();
   const sorters = {
+    none: () => 0,
     disc: (a, b) => (b.d || 0) - (a.d || 0) || b.t.length - a.t.length || a.p - b.p,
     fresh: (a, b) => (b.fs || '').localeCompare(a.fs || '') || (b.d || 0) - (a.d || 0),
     asc: (a, b) => a.p - b.p, desc: (a, b) => b.p - a.p,
