@@ -85,8 +85,9 @@ body.menu .scrim{display:block;animation:fade .2s ease}
 body.menu .drawer{display:flex;animation:slide .25s ease}
 @keyframes fade{from{opacity:0}}
 @keyframes slide{from{transform:translateX(calc(100% + 24px))}}
-.drawer-foot{margin-top:auto;display:flex;justify-content:center}
-.drawer-head{display:flex;align-items:center;justify-content:space-between}
+.drawer-head{display:flex;align-items:center;gap:10px}
+.drawer-head .lang{margin-left:auto}
+.drawer-head .burger{margin-left:0}
 .drawer-head b{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.2rem;text-transform:uppercase}
 .store-list{display:flex;flex-direction:column;gap:8px}
 .store-btn{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:22px;padding:12px 14px;box-shadow:var(--shadow);text-align:left;width:100%}
@@ -143,14 +144,15 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Меню">
-  <div class="drawer-head"><b id="menuTitle"></b><button class="burger" type="button" id="closeBtn" aria-label="Закрыть"><i class="ph-bold ph-x"></i></button></div>
-  <div class="store-list" id="storeList"></div>
-  <div class="drawer-foot">
+  <div class="drawer-head">
+    <b id="menuTitle"></b>
     <div class="lang" role="group" aria-label="Язык">
       <button type="button" data-lang="ru">RU</button>
       <button type="button" data-lang="tr">TR</button>
     </div>
+    <button class="burger" type="button" id="closeBtn" aria-label="Закрыть"><i class="ph-bold ph-x"></i></button>
   </div>
+  <div class="store-list" id="storeList"></div>
 </aside>
 
 <script>
