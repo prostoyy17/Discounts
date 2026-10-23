@@ -99,7 +99,7 @@ if (!offline) {
 }
 
 const built = await buildSiteData(STORES.map((s) => s.id));
-console.log(`\nsite/data/products.json: ${built.products} ürün, mağazalar: ${built.stores.join(', ')}`);
+console.log(`\nsite/data: ${built.products} ürün, mağazalar: ${built.stores.join(', ')}`);
 for (const s of status) console.log(`  ${s.fresh ? '✓' : '⚠'} ${s.store}${s.fresh ? '' : ` — ${s.reason}; veri: ${s.dataFrom ?? 'yok'}`}`);
 if (!built.products) {
   console.error('Hiçbir mağaza için veri yok — yayın yapılmayacak.');

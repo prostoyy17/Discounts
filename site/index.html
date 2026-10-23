@@ -11,7 +11,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<!-- Only the two icon weights the page uses (the loader script pulls all six). -->
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<link rel="preconnect" href="https://images.migrosone.com">
+<link rel="preconnect" href="https://images.ceptesok.com">
+<link rel="preconnect" href="https://cdn1.bim.com.tr">
 <style>
 :root{
   --bg:#F5F5F3; --surface:#FFFFFF; --mint:#C5E2DF; --lime:#D7FF00; --ink:#000000;
@@ -211,6 +216,7 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch { return 
 let lang = store.get('lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'ru');
 const state = { store: store.get('store') || 'all', chip: 'all', category: '', sort: 'disc', shown: PAGE };
 let DATA = null, STORES = {}, current = [];
+const LOADED = {}; // store id -> its deals, loaded on demand
 const T = () => I18N[lang];
 
 const fmt = (opts) => new Intl.DateTimeFormat(T().locale, { timeZone: 'UTC', ...opts });
@@ -271,9 +277,10 @@ function freshness(s) {
 }
 
 function renderMenu() {
-  const live = DATA.products.filter((p) => !expired(p));
-  const rows = [{ id: 'all', name: T().allStores, ico: null, n: live.length },
-    ...DATA.stores.map((s) => ({ id: s.id, name: s.name, ico: s.name.slice(0, 1), n: live.filter((p) => p.s === s.id).length, s }))];
+  // Counts from loaded deals when we have them, else from stores.json.
+  const countOf = (s) => LOADED[s.id] ? LOADED[s.id].filter((p) => !expired(p)).length : s.count;
+  const per = DATA.stores.map((s) => ({ id: s.id, name: s.name, ico: s.name.slice(0, 1), n: countOf(s), s }));
+  const rows = [{ id: 'all', name: T().allStores, ico: null, n: per.reduce((a, r) => a + r.n, 0) }, ...per];
   $('storeList').replaceChildren(...rows.map((r) => {
     const b = el('button', 'store-btn'); b.type = 'button'; b.setAttribute('aria-current', state.store === r.id);
     const info = el('span', 'info'); info.append(el('div', 'nm', r.name));
@@ -378,31 +385,59 @@ function showMore() {
 function setStore(id) {
   state.store = id === 'all' || STORES[id] ? id : 'all'; store.set('store', state.store);
   state.chip = 'all'; state.category = ''; state.shown = PAGE;
-  renderStatic(); renderChips(); render(); window.scrollTo({ top: 0 });
+  renderStatic(); window.scrollTo({ top: 0 });
+  show();
 }
+
+// Downloads the deal files the current view needs (once each), then renders.
+const needed = () => (state.store === 'all' ? DATA.stores.map((s) => s.id) : [state.store]);
+function load(id) {
+  if (LOADED[id]) return LOADED[id];
+  const s = STORES[id];
+  return (LOADED[id] = fetch(`data/${s.file}?v=${s.v}`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((items) => {
+      for (const p of items) { p.s = id; p._f = fold(`${p.n} ${p.b || ''} ${p.c || ''} ${s.name}`); }
+      LOADED[id] = items;
+      DATA.products = DATA.stores.flatMap((x) => (Array.isArray(LOADED[x.id]) ? LOADED[x.id] : []));
+      return items;
+    })
+    .catch((e) => { delete LOADED[id]; throw e; }));
+}
+let showToken = 0;
+function show() {
+  const token = ++showToken;
+  const ids = needed();
+  if (ids.some((id) => !Array.isArray(LOADED[id]))) { $('count').textContent = ''; $('grid').replaceChildren(); $('chips').replaceChildren(); $('more').hidden = true; }
+  Promise.all(ids.map(load)).then(() => {
+    if (token !== showToken) return; // user switched store meanwhile
+    renderMenu(); renderChips(); render();
+  }).catch(showError);
+  // Warm the other stores in the background so switching is instant.
+  if (state.store !== 'all') setTimeout(() => DATA.stores.forEach((x) => load(x.id)?.catch?.(() => {})), 1500);
+}
+function showError() { const e = el('div', 'empty'); e.append(icon('wifi-slash'), document.createTextNode(T().error)); $('grid').replaceChildren(e); }
 const openMenu = () => document.body.classList.add('menu');
 const closeMenu = () => document.body.classList.remove('menu');
 
-document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => { lang = b.dataset.lang; store.set('lang', lang); renderStatic(); if (DATA) { renderChips(); render(); } });
+document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => { lang = b.dataset.lang; store.set('lang', lang); renderStatic(); if (DATA) show(); });
 $('menuBtn').onclick = openMenu; $('closeBtn').onclick = closeMenu; $('scrim').onclick = closeMenu;
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 $('sortBtn').onclick = (e) => { e.preventDefault(); $('sortsheet').classList.toggle('open'); };
 $('more').onclick = showMore;
-let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(() => { if (DATA) { state.shown = PAGE; render(); } }, 150); });
+let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(() => { if (DATA && DATA.products.length) { state.shown = PAGE; render(); } }, 150); });
 new IntersectionObserver((es) => { if (es[0].isIntersecting && !$('more').hidden) showMore(); }, { rootMargin: '600px' }).observe($('more'));
 setInterval(() => { if (DATA) renderMenu(); }, 60000); // keep "N min ago" current
 
 renderStatic();
-fetch('data/products.json', { cache: 'no-cache' })
+fetch('data/stores.json', { cache: 'no-cache' })
   .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .then((data) => {
-    DATA = data;
+    DATA = { ...data, products: [] };
     for (const s of data.stores) STORES[s.id] = { every: 6, ...s };
-    for (const p of data.products) p._f = fold(`${p.n} ${p.b || ''} ${p.c || ''} ${STORES[p.s].name}`);
     if (state.store !== 'all' && !STORES[state.store]) state.store = 'all';
-    renderStatic(); renderChips(); render();
+    renderStatic(); show();
   })
-  .catch(() => { const e = el('div', 'empty'); e.append(icon('wifi-slash'), document.createTextNode(T().error)); $('grid').replaceChildren(e); });
+  .catch(showError);
 </script>
 </body>
 </html>

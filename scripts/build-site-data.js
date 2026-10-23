@@ -1,8 +1,8 @@
-// Merges site/data/<store>.json into the compact site/data/products.json the
-// page loads. Short keys and per-store URL prefixes keep it small (GitHub
+// Turns site/data/<store>.json into what the page loads: stores.json (store
+// list, logos, BİM periods) + deals-<store>.json (compact deal list per store). Short keys and per-store URL prefixes keep it small (GitHub
 // Pages also gzips it). Runnable alone: node scripts/build-site-data.js
 //
-// Product keys: s store, id, n name, b brand, c category, p price, o old price,
+// Product keys: n name, b brand, c category, p price, o old price,
 // t deal types (src/deals.js),
 // d discount %, m price condition ("money"), pr promotions, i image (relative
 // to store.img), u link (relative to store.url), vf/vt valid from/to, pk BİM period key, x out of stock, e Ekstra,
@@ -11,6 +11,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 import { dealTypes } from '../src/deals.js';
 
 const META = {
@@ -29,7 +30,7 @@ const cleanPromos = (list) => [...new Set((list ?? [])
 const rel = (full, base) => (full && full.startsWith(base) ? full.slice(base.length) : full ? `!${full}` : null);
 
 function compact(p, meta) {
-  const o = { s: p.store, id: p.id, n: p.name, p: p.price, t: dealTypes(p), i: rel(p.image, meta.img), u: rel(p.url, meta.url) };
+  const o = { n: p.name, p: p.price, t: dealTypes(p), i: rel(p.image, meta.img), u: rel(p.url, meta.url) };
   if (p.brand) o.b = p.brand;
   if (p.category) o.c = p.category;
   if (p.quantity) o.q = p.quantity;
@@ -62,15 +63,28 @@ export async function buildSiteData(storeIds, dir = 'site/data') {
       fetchedAt: data.fetchedAt, stale: data.stale ?? null, every: meta.every, trackingSince: data.trackingSince ?? null,
       count: list.length, discounts: list.filter((p) => p.oldPrice).length, catalogSize: all.length,
     });
-    for (const p of list) products.push(compact(p, meta));
+    for (const p of list) products.push({ ...compact(p, meta), _store: id });
     if (id === 'bim') periods = data.periods.map(({ key, label, section, validFrom, validTo }) => ({ key, label, section, validFrom, validTo }));
   }
-  const out = { generatedAt: new Date().toISOString(), stores, periods, products };
-  await fs.writeFile(path.join(dir, 'products.json'), JSON.stringify(out));
+  // The page first loads the small stores.json, then only the deal files of
+  // the store(s) it shows — opening one store downloads just that store.
+  const generatedAt = new Date().toISOString();
+  for (const st of stores) {
+    const file = `deals-${st.id}.json`;
+    const items = products.filter((p) => p._store === st.id).map(({ _store, ...p }) => p);
+    const body = JSON.stringify(items);
+    await fs.writeFile(path.join(dir, file), body);
+    st.file = file;
+    // Content hash in the URL: browsers may cache it forever and still get new
+    // data the moment it changes.
+    st.v = createHash('sha1').update(body).digest('hex').slice(0, 10);
+  }
+  await fs.writeFile(path.join(dir, 'stores.json'), JSON.stringify({ generatedAt, stores, periods }));
+  await fs.rm(path.join(dir, 'products.json'), { force: true });
   return { products: products.length, stores: stores.map((s) => s.id) };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const r = await buildSiteData(Object.keys(META));
-  console.log(`site/data/products.json: ${r.products} ürün (${r.stores.join(', ')})`);
+  console.log(`site/data/stores.json + deals-*.json: ${r.products} ürün (${r.stores.join(', ')})`);
 }
