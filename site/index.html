@@ -101,6 +101,7 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 .store-btn .ico{width:44px;height:44px;color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none}
 .store-btn .ico.all{background:var(--lime);border-radius:50%;box-shadow:none}
 .store-btn .ico img{width:100%;height:100%;object-fit:contain}
+.store-btn .ico[data-store=vkusvill] img{border-radius:12px} /* square app-icon logo */
 .store-btn .info{flex:1;min-width:0}
 .store-btn .nm{font-weight:700}
 .store-btn .sub{font-size:.74rem;display:flex;align-items:center;gap:6px;color:var(--muted)}
@@ -301,6 +302,7 @@ function renderMenu() {
     const b = el('button', 'store-btn'); b.type = 'button'; b.setAttribute('aria-current', state.store === r.id);
     const info = el('span', 'info'); info.append(el('div', 'nm', r.name));
     const ico = el('span', r.s ? 'ico' : 'ico all');
+    if (r.s) ico.dataset.store = r.id;
     if (r.s?.logo) {
       const img = el('img'); img.alt = r.name; img.referrerPolicy = 'no-referrer'; img.src = r.s.logo;
       img.onerror = () => img.replaceWith(document.createTextNode(r.name.slice(0, 1)));
