@@ -147,7 +147,6 @@ body.menu .drawer{transform:none;visibility:visible;transition:transform .25s ea
       <button type="button" data-lang="ru">RU</button>
       <button type="button" data-lang="tr">TR</button>
     </div>
-    <small id="menuNote"></small>
   </div>
 </aside>
 
@@ -248,7 +247,6 @@ function renderStatic() {
   $('footer').textContent = T().footer;
   $('more').textContent = T().more;
   $('menuTitle').textContent = T().menu;
-  $('menuNote').textContent = T().note;
   $('storeTitle').textContent = STORES[state.store] ? '· ' + STORES[state.store].name : '';
   document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang));
   $('sortsheet').replaceChildren(...Object.entries(T().sort).map(([k, label]) => {
