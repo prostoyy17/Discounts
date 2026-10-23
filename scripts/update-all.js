@@ -3,8 +3,11 @@
 // published data is reused (downloaded from the live site) and marked stale,
 // while the other stores still update. Nothing is ever replaced by bad data.
 //
-//   node scripts/update-all.js [--only bim,sok] [--no-verify] [--offline]
+//   node scripts/update-all.js [--only bim,sok] [--no-verify] [--offline] [--reuse-published]
 //     --offline: don't crawl; just rebuild from site/data/<store>.json
+//     --reuse-published: don't crawl; take each store's last published data
+//       from the live site (used on code pushes so design changes go live in
+//       a minute instead of waiting for a full crawl)
 
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
@@ -21,6 +24,7 @@ const STORES = [
 const args = process.argv;
 const only = args.includes('--only') ? new Set(args[args.indexOf('--only') + 1].split(',')) : null;
 const offline = args.includes('--offline');
+const reuse = args.includes('--reuse-published');
 const verify = !args.includes('--no-verify');
 const dataFile = (id) => path.resolve(`site/data/${id}.json`);
 
@@ -42,6 +46,15 @@ async function previousPublished(id) {
 const status = [];
 for (const store of STORES) {
   if (only && !only.has(store.id)) continue;
+  if (reuse) {
+    const prev = await previousPublished(store.id);
+    if (prev) {
+      await fs.mkdir(path.dirname(dataFile(store.id)), { recursive: true });
+      await fs.writeFile(dataFile(store.id), JSON.stringify(prev));
+      status.push({ store: store.id, fresh: false, reason: 'yeniden kullanıldı', dataFrom: prev.fetchedAt });
+    } else status.push({ store: store.id, fresh: false, reason: 'yayımlanmış veri yok', dataFrom: null });
+    continue;
+  }
   let ok = offline;
   let error = null;
   if (!offline) {

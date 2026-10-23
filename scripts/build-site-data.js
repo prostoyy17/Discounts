@@ -18,6 +18,12 @@ const META = {
   migros: { name: 'Migros', img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
 };
 
+// Same promo rules as the current parsers, so data published by an older
+// crawl is shown correctly too.
+const cleanPromos = (list) => [...new Set((list ?? [])
+  .map((t) => t.replace(/\s*\(Money\)$/, ''))
+  .filter((t) => t && !/ücretsiz (teslimat|kargo)/i.test(t)))];
+
 const rel = (full, base) => (full && full.startsWith(base) ? full.slice(base.length) : full ? `!${full}` : null);
 
 function compact(p, meta) {
@@ -46,7 +52,7 @@ export async function buildSiteData(storeIds, dir = 'site/data') {
     catch { continue; }
     const meta = META[id];
     // Only products with some saving; out-of-stock items are dropped too.
-    const all = data.products.filter((p) => p.inStock !== false);
+    const all = data.products.filter((p) => p.inStock !== false).map((p) => ({ ...p, promotions: cleanPromos(p.promotions) }));
     const list = all.filter((p) => dealTypes(p).length);
     stores.push({
       id, name: meta.name, img: meta.img, url: meta.url, source: data.source,

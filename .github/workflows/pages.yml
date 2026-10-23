@@ -14,8 +14,8 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: pages-${{ github.event_name == 'push' && 'push' || 'crawl' }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -32,9 +32,18 @@ jobs:
       - name: Unit tests
         run: npm test
       - name: Crawl, verify and build data
-        # Stores are added here only after they passed a full manual check.
-        # A store whose crawl/verification fails keeps its last published data.
+        # Scheduled/manual runs crawl every store. Stores are listed here only
+        # after they passed a full manual check; a store whose crawl or
+        # verification fails keeps its last published data.
+        if: github.event_name != 'push'
         run: node scripts/update-all.js --only "${STORES}"
+        env:
+          STORES: bim,sok,migros
+      - name: Reuse published data (code push)
+        # A push only changes code/design: rebuild the site from the data that
+        # is already live, so it is online in a minute.
+        if: github.event_name == 'push'
+        run: node scripts/update-all.js --reuse-published --only "${STORES}"
         env:
           STORES: bim,sok,migros
       - uses: actions/configure-pages@v5
