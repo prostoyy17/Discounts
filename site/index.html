@@ -20,12 +20,12 @@
   color-scheme:light;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:120px}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:24px}
 button,select{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
 input{font:inherit;color:inherit;border:0;outline:0;background:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
 
-.top{display:flex;align-items:center;gap:10px;padding:18px 0 14px}
+.top{display:flex;align-items:center;gap:10px;padding:12px 0 10px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
 .logo-mark{width:44px;height:44px;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:22px}
 .logo-name{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.45rem;text-transform:uppercase}
@@ -35,11 +35,11 @@ input{font:inherit;color:inherit;border:0;outline:0;background:none}
 .lang button{padding:7px 12px;border-radius:999px;font-weight:600;font-size:.82rem;color:var(--muted)}
 .lang button[aria-pressed=true]{background:var(--mint);color:var(--ink)}
 
-.search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:999px;padding:6px 6px 6px 18px;box-shadow:var(--shadow)}
+.search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:999px;padding:4px 4px 4px 16px;box-shadow:var(--shadow)}
 .search>i{font-size:20px}
 .search input{flex:1;min-width:0;padding:8px 0}
 .search input::placeholder{color:#A3A6AE}
-.lime-btn{width:44px;height:44px;flex:none;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:20px;color:var(--ink)}
+.lime-btn{width:40px;height:40px;flex:none;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:20px;color:var(--ink)}
 .lime-btn.sm{width:38px;height:38px;font-size:18px}
 .sheet{display:none;gap:8px;flex-wrap:wrap;padding:12px 0 0}
 .sheet.open{display:flex}
@@ -49,9 +49,9 @@ h1{font-family:Archivo,Inter,sans-serif;font-stretch:78%;font-weight:900;font-si
 .meta .dot{width:4px;height:4px;border-radius:50%;background:#C3C5CC}
 .meta .warn{color:#8a5a00}
 
-.chips{display:flex;gap:8px;overflow-x:auto;padding:14px 16px 2px;margin:0 -16px;scrollbar-width:none}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px 0;margin:0 -16px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;background:var(--surface);border-radius:999px;padding:11px 18px;font-weight:500;font-size:.9rem;white-space:nowrap;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+.chip{flex:none;background:var(--surface);border-radius:999px;padding:7px 13px;font-weight:500;font-size:.84rem;white-space:nowrap;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
 .chip small{color:var(--muted);font-weight:500}
 .chip[aria-pressed=true]{background:var(--mint)}
 .chip[aria-pressed=true] small{color:#3d5553}
@@ -59,7 +59,7 @@ h1{font-family:Archivo,Inter,sans-serif;font-stretch:78%;font-weight:900;font-si
 .chip.store[aria-pressed=true] small{color:#c9cbd1}
 .chip select{appearance:none;-webkit-appearance:none;padding-right:4px;max-width:58vw}
 
-.count{color:var(--muted);font-size:.85rem;padding:16px 0 12px}
+.count{color:var(--muted);font-size:.8rem;padding:10px 2px 8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .card{background:var(--surface);border-radius:var(--r-xl);padding:10px;display:flex;flex-direction:column;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .15s}
 .card:hover{transform:translateY(-3px)}
@@ -120,7 +120,6 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
         <button type="button" data-lang="ru">RU</button>
         <button type="button" data-lang="tr">TR</button>
       </div>
-      <button class="circle" type="button" id="aboutBtn" aria-label="О сайте"><i class="ph ph-info"></i></button>
     </div>
   </header>
 
@@ -130,11 +129,6 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
     <button class="lime-btn" type="button" id="sortBtn" aria-label="Сортировка"><i class="ph-bold ph-sliders-horizontal"></i></button>
   </label>
   <div class="sheet" id="sortsheet"></div>
-  <div class="about" id="about"></div>
-
-  <h1 id="title"></h1>
-  <div class="meta" id="meta"></div>
-
   <nav class="chips" id="stores"></nav>
   <nav class="chips" id="chips"></nav>
   <div class="count" id="count"></div>
@@ -143,13 +137,6 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
   <footer id="footer"></footer>
 </main>
 
-<nav class="nav" id="nav">
-  <button type="button" data-view="all-products"><i class="ph ph-storefront"></i><span class="sr"></span></button>
-  <button type="button" data-view="deals"><i class="ph ph-percent"></i><span class="sr"></span></button>
-  <button type="button" data-view="home" class="center"><i class="ph-fill ph-house"></i><span class="sr"></span></button>
-  <button type="button" data-view="soon"><i class="ph ph-calendar-dots"></i><span class="sr"></span></button>
-  <button type="button" data-view="search"><i class="ph ph-magnifying-glass"></i><span class="sr"></span></button>
-</nav>
 
 <script>
 const I18N = {
@@ -219,9 +206,7 @@ function matches(p) {
 
 function renderStatic() {
   document.documentElement.lang = lang;
-  $('title').innerHTML = T().title;
   $('q').placeholder = T().search;
-  $('about').innerHTML = T().about;
   $('footer').textContent = T().footer;
   $('more').textContent = T().more;
   document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang));
@@ -231,16 +216,6 @@ function renderStatic() {
     b.onclick = () => { state.sort = k; renderStatic(); render(); };
     return b;
   }));
-  if (DATA) {
-    const parts = [];
-    for (const s of DATA.stores) {
-      const t = new Date(s.fetchedAt).toLocaleString(T().locale, { timeZone: 'Europe/Istanbul', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-      parts.push(el('span', s.stale ? 'warn' : '', `${s.name} ${t}${s.stale ? ' · ' + T().stale : ''}`));
-    }
-    const kids = [el('span', '', `${T().updated}:`)];
-    parts.forEach((p, i) => { if (i) kids.push(el('span', 'dot')); kids.push(p); });
-    $('meta').replaceChildren(...kids);
-  }
 }
 
 function chip(label, n, pressed, onclick, cls = 'chip') {
@@ -367,7 +342,6 @@ function nav(v) {
 document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => { lang = b.dataset.lang; store.set('lang', lang); renderStatic(); if (DATA) { renderChips(); render(); } });
 document.querySelectorAll('#nav button').forEach((b) => b.onclick = () => nav(b.dataset.view));
 $('sortBtn').onclick = (e) => { e.preventDefault(); $('sortsheet').classList.toggle('open'); };
-$('aboutBtn').onclick = () => $('about').classList.toggle('open');
 $('more').onclick = showMore;
 let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(() => { if (DATA) { state.shown = PAGE; render(); } }, 150); });
 new IntersectionObserver((es) => { if (es[0].isIntersecting && !$('more').hidden) showMore(); }, { rootMargin: '600px' }).observe($('more'));
