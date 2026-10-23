@@ -271,7 +271,6 @@ function renderMenu() {
   $('storeList').replaceChildren(...rows.map((r) => {
     const b = el('button', 'store-btn'); b.type = 'button'; b.setAttribute('aria-current', state.store === r.id);
     const info = el('span', 'info'); info.append(el('div', 'nm', r.name));
-    if (r.s) { const [lvl, txt] = freshness(r.s); const sub = el('div', 'sub'); sub.append(el('span', 'dot ' + lvl), document.createTextNode(txt)); info.append(sub); }
     const ico = el('span', r.s ? 'ico' : 'ico all');
     if (r.s?.logo) {
       const img = el('img'); img.alt = r.name; img.referrerPolicy = 'no-referrer'; img.src = r.s.logo;
