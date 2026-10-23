@@ -5,7 +5,8 @@
 // Product keys: s store, id, n name, b brand, c category, p price, o old price,
 // t deal types (src/deals.js),
 // d discount %, m price condition ("money"), pr promotions, i image (relative
-// to store.img), u link (relative to store.url), vf/vt valid from/to, pk BİM period key, x out of stock, e Ekstra.
+// to store.img), u link (relative to store.url), vf/vt valid from/to, pk BİM period key, x out of stock, e Ekstra,
+// fs first seen (ISO time; absent = unknown).
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -13,9 +14,10 @@ import { fileURLToPath } from 'node:url';
 import { dealTypes } from '../src/deals.js';
 
 const META = {
-  bim: { name: 'BİM', img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
-  sok: { name: 'ŞOK', img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
-  migros: { name: 'Migros', img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
+  // every: planned crawl interval in hours (see .github/workflows/pages.yml)
+  bim: { name: 'BİM', every: 8, img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
+  sok: { name: 'ŞOK', every: 24, img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
+  migros: { name: 'Migros', every: 48, img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
 };
 
 // Same promo rules as the current parsers, so data published by an older
@@ -39,6 +41,7 @@ function compact(p, meta) {
   if (p.periodKey) o.pk = p.periodKey;
   if (p.inStock === false) o.x = 1;
   if (p.channel === 'ekstra') o.e = 1;
+  if (p.firstSeen) o.fs = p.firstSeen;
   return o;
 }
 
@@ -56,7 +59,7 @@ export async function buildSiteData(storeIds, dir = 'site/data') {
     const list = all.filter((p) => dealTypes(p).length);
     stores.push({
       id, name: meta.name, img: meta.img, url: meta.url, source: data.source,
-      fetchedAt: data.fetchedAt, stale: data.stale ?? null,
+      fetchedAt: data.fetchedAt, stale: data.stale ?? null, every: meta.every, trackingSince: data.trackingSince ?? null,
       count: list.length, discounts: list.filter((p) => p.oldPrice).length, catalogSize: all.length,
     });
     for (const p of list) products.push(compact(p, meta));

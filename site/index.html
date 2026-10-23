@@ -16,7 +16,6 @@
 :root{
   --bg:#F5F5F3; --surface:#FFFFFF; --mint:#C5E2DF; --lime:#D7FF00; --ink:#000000;
   --text:#111111; --muted:#7A7D86; --shadow:0 6px 24px rgba(17,17,17,.06);
-  --r-xl:28px; --r-lg:22px;
   color-scheme:light;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -26,28 +25,20 @@ input{font:inherit;color:inherit;border:0;outline:0;background:none}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
 
 .top{display:flex;align-items:center;gap:10px;padding:12px 0 10px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
-.logo-mark{width:44px;height:44px;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:22px}
-.logo-name{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.45rem;text-transform:uppercase}
-.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
-.circle{width:44px;height:44px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:20px;box-shadow:var(--shadow)}
-.lang{display:flex;background:var(--surface);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
-.lang button{padding:7px 12px;border-radius:999px;font-weight:600;font-size:.82rem;color:var(--muted)}
-.lang button[aria-pressed=true]{background:var(--mint);color:var(--ink)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-width:0}
+.logo-mark{width:40px;height:40px;flex:none;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:20px}
+.logo-name{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.3rem;text-transform:uppercase;white-space:nowrap}
+.logo-store{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:800;font-size:1.3rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.burger{margin-left:auto;width:44px;height:44px;flex:none;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:22px;box-shadow:var(--shadow)}
 
 .search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:999px;padding:4px 4px 4px 16px;box-shadow:var(--shadow)}
 .search>i{font-size:20px}
 .search input{flex:1;min-width:0;padding:8px 0}
 .search input::placeholder{color:#A3A6AE}
 .lime-btn{width:40px;height:40px;flex:none;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:20px;color:var(--ink)}
-.lime-btn.sm{width:38px;height:38px;font-size:18px}
-.sheet{display:none;gap:8px;flex-wrap:wrap;padding:12px 0 0}
+.lime-btn.sm{width:36px;height:36px;font-size:17px}
+.sheet{display:none;gap:6px;flex-wrap:wrap;padding:10px 0 0}
 .sheet.open{display:flex}
-
-h1{font-family:Archivo,Inter,sans-serif;font-stretch:78%;font-weight:900;font-size:clamp(2.1rem,7vw,3.4rem);line-height:.95;text-transform:uppercase;margin:26px 0 8px}
-.meta{color:var(--muted);font-size:.82rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.meta .dot{width:4px;height:4px;border-radius:50%;background:#C3C5CC}
-.meta .warn{color:#8a5a00}
 
 .chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px 0;margin:0 -16px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
@@ -55,27 +46,27 @@ h1{font-family:Archivo,Inter,sans-serif;font-stretch:78%;font-weight:900;font-si
 .chip small{color:var(--muted);font-weight:500}
 .chip[aria-pressed=true]{background:var(--mint)}
 .chip[aria-pressed=true] small{color:#3d5553}
-.chip.store[aria-pressed=true]{background:var(--ink);color:#fff}
-.chip.store[aria-pressed=true] small{color:#c9cbd1}
-.chip select{appearance:none;-webkit-appearance:none;padding-right:4px;max-width:58vw}
+.chip select{appearance:none;-webkit-appearance:none;max-width:56vw}
 
 .count{color:var(--muted);font-size:.8rem;padding:10px 2px 8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.card{background:var(--surface);border-radius:var(--r-xl);padding:10px;display:flex;flex-direction:column;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .15s}
+.card{background:var(--surface);border-radius:28px;padding:10px;display:flex;flex-direction:column;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .15s}
 .card:hover{transform:translateY(-3px)}
-.pic{position:relative;border-radius:var(--r-lg);background:#fff;aspect-ratio:1/1;overflow:hidden}
+.pic{position:relative;border-radius:22px;background:#fff;aspect-ratio:1/1;overflow:hidden}
 .pic img{width:100%;height:100%;object-fit:contain;display:block}
 .badge{position:absolute;top:10px;left:10px;background:var(--lime);color:var(--ink);font-weight:700;font-size:.8rem;border-radius:999px;padding:5px 10px}
+.newbadge{position:absolute;bottom:10px;left:10px;background:var(--ink);color:var(--lime);font-weight:700;font-size:.7rem;border-radius:999px;padding:4px 9px;letter-spacing:.04em}
 .storetag{position:absolute;top:10px;right:10px;background:var(--surface);color:var(--ink);font-weight:700;font-size:.72rem;border-radius:999px;padding:5px 9px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .body{padding:10px 6px 4px;display:flex;flex-direction:column;gap:2px;flex:1}
 .tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
 .tag{display:flex;align-items:center;gap:4px;background:var(--mint);border-radius:999px;padding:3px 9px;font-size:.72rem;font-weight:600;color:#26403e}
 .tag.soon{background:#FFF7C2;color:#5c5200}
+.tag.end{background:#FFE4DE;color:#8a2a12}
 .tag.money{background:#EFE6FF;color:#4a2a8a}
 .tag.promo{background:var(--lime);color:var(--ink)}
+.tag.seen{background:#ECECE8;color:#4b4e55}
 .brand{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 .name{font-weight:700;line-height:1.25;font-size:.95rem}
-.qty{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:4px}
 .row{display:flex;align-items:flex-end;gap:8px;margin-top:auto;padding-top:10px}
 .prices{display:flex;flex-direction:column;line-height:1.1}
 .price{font-family:Archivo,Inter,sans-serif;font-stretch:85%;font-weight:800;font-size:1.45rem}
@@ -84,17 +75,29 @@ h1{font-family:Archivo,Inter,sans-serif;font-stretch:78%;font-weight:900;font-si
 .empty{color:var(--muted);text-align:center;padding:60px 0;grid-column:1/-1}
 .empty i{font-size:40px;display:block;margin-bottom:8px}
 .more{display:block;margin:20px auto 0;background:var(--surface);border-radius:999px;padding:12px 22px;font-weight:600;box-shadow:var(--shadow)}
+footer{color:var(--muted);font-size:.75rem;padding:24px 0 8px;text-align:center}
 
-.about{display:none;background:var(--surface);border-radius:var(--r-lg);padding:16px 18px;margin-top:14px;box-shadow:var(--shadow);font-size:.88rem;color:#3b3e45}
-.about.open{display:block}
-.about b{color:var(--ink)}
-footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
-
-.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(440px,calc(100% - 24px));height:68px;background:var(--mint);border-radius:26px;display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:10;box-shadow:0 10px 30px rgba(17,17,17,.12)}
-.nav button{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:24px;color:#1b2b2a}
-.nav button.center{width:64px;height:64px;margin-top:-34px;background:var(--lime);font-size:26px;box-shadow:0 0 0 8px var(--bg)}
-.nav button[aria-current=true]:not(.center){background:rgba(255,255,255,.6)}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(360px,88vw);background:var(--bg);z-index:21;transform:translateX(100%);transition:transform .25s ease;padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;box-shadow:-10px 0 30px rgba(0,0,0,.12)}
+body.menu .scrim{opacity:1;pointer-events:auto}
+body.menu .drawer{transform:none}
+.drawer-head{display:flex;align-items:center;justify-content:space-between}
+.drawer-head b{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.2rem;text-transform:uppercase}
+.store-list{display:flex;flex-direction:column;gap:8px}
+.store-btn{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:22px;padding:12px 14px;box-shadow:var(--shadow);text-align:left;width:100%}
+.store-btn[aria-current=true]{background:var(--ink);color:#fff}
+.store-btn .ico{width:40px;height:40px;border-radius:50%;background:var(--lime);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none}
+.store-btn .info{flex:1;min-width:0}
+.store-btn .nm{font-weight:700}
+.store-btn .sub{font-size:.74rem;display:flex;align-items:center;gap:6px;color:var(--muted)}
+.store-btn[aria-current=true] .sub{color:#c9cbd1}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.dot.ok{background:#2fbf71}.dot.warn{background:#f5b300}.dot.bad{background:#e5484d}
+.store-btn .n{font-weight:700;font-size:.9rem}
+.lang{display:flex;background:var(--surface);border-radius:999px;padding:4px;box-shadow:var(--shadow);align-self:flex-start}
+.lang button{padding:7px 14px;border-radius:999px;font-weight:600;font-size:.82rem;color:var(--muted)}
+.lang button[aria-pressed=true]{background:var(--mint);color:var(--ink)}
+.drawer small{color:var(--muted);font-size:.75rem;line-height:1.4}
 
 @media (max-width:520px){
   .grid{grid-template-columns:1fr 1fr;gap:10px}
@@ -103,9 +106,8 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
   .body{padding:8px 4px 2px}
   .name{font-size:.86rem}
   .price{font-size:1.2rem}
-  .lime-btn.sm{width:34px;height:34px;font-size:16px}
-  .logo-name{font-size:1.25rem}
-  .circle,.logo-mark{width:40px;height:40px}
+  .lime-btn.sm{width:32px;height:32px;font-size:15px}
+  .logo-name,.logo-store{font-size:1.15rem}
   .storetag{font-size:.66rem;padding:4px 7px}
   .badge{font-size:.74rem;padding:4px 8px}
 }
@@ -114,13 +116,8 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
 <body>
 <main class="wrap">
   <header class="top">
-    <a class="logo" href="./"><span class="logo-mark"><i class="ph-bold ph-tag"></i></span><span class="logo-name">RevoSell</span></a>
-    <div class="top-actions">
-      <div class="lang" role="group" aria-label="Язык">
-        <button type="button" data-lang="ru">RU</button>
-        <button type="button" data-lang="tr">TR</button>
-      </div>
-    </div>
+    <a class="logo" href="./"><span class="logo-mark"><i class="ph-bold ph-tag"></i></span><span class="logo-name">RevoSell</span><span class="logo-store" id="storeTitle"></span></a>
+    <button class="burger" type="button" id="menuBtn" aria-label="Меню"><i class="ph-bold ph-list"></i></button>
   </header>
 
   <label class="search">
@@ -129,7 +126,7 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
     <button class="lime-btn" type="button" id="sortBtn" aria-label="Сортировка"><i class="ph-bold ph-sliders-horizontal"></i></button>
   </label>
   <div class="sheet" id="sortsheet"></div>
-  <nav class="chips" id="stores"></nav>
+
   <nav class="chips" id="chips"></nav>
   <div class="count" id="count"></div>
   <section class="grid" id="grid"></section>
@@ -137,35 +134,55 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
   <footer id="footer"></footer>
 </main>
 
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Меню">
+  <div class="drawer-head"><b id="menuTitle"></b><button class="burger" type="button" id="closeBtn" aria-label="Закрыть"><i class="ph-bold ph-x"></i></button></div>
+  <div class="store-list" id="storeList"></div>
+  <div class="lang" role="group" aria-label="Язык">
+    <button type="button" data-lang="ru">RU</button>
+    <button type="button" data-lang="tr">TR</button>
+  </div>
+  <small id="menuNote"></small>
+</aside>
 
 <script>
 const I18N = {
   ru: {
-    title: 'Лови скидки<br>недели', search: 'Найти товар или бренд…', allStores: 'Все магазины',
-    deals: 'Все акции', soon: 'Скоро', category: 'Все категории',
-    types: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк', clearance: 'Распродажа', catalog: 'Каталог акций', goodprice: 'Выгодная цена', promo: 'Другие акции' },
-    products: (n) => `${n.toLocaleString('ru-RU')} ${plural(n, ['товар', 'товара', 'товаров'])}`, updated: 'обновлено',
-    stale: 'данные не обновились', more: 'Показать ещё',
-    sort: { disc: 'Самая большая скидка', asc: 'Сначала дешёвые', desc: 'Сначала дорогие', name: 'По названию' },
-    onSale: (d) => `В продаже с ${d}`, startsOn: (d) => `С ${d}`, until: (d) => `До ${d}`, from: (d) => `С ${d}`,
-    money: 'С картой Money', empty: 'Ничего не найдено', error: 'Не удалось загрузить данные. Попробуйте позже.',
-    nav: { 'all-products': 'Все товары', deals: 'Скидки', home: 'Главная', soon: 'Скоро', search: 'Поиск' },
-    about: '<b>RevoSell</b> собирает акции и цены магазинов Турции: <b>BİM</b> (Aktüel и İndirim), <b>ŞOK</b> (онлайн-каталог Market и Ekstra) и <b>Migros</b> (онлайн-магазин). Данные обновляются дважды в день и проверяются: цена, старая цена, фото и ссылка сверяются со страницей товара. У Migros скидочная цена действует <b>с бесплатной картой Money</b>. Цены и фото принадлежат магазинам, по клику открывается страница товара в магазине. В конкретном магазине цена может отличаться, количество ограничено.',
-    footer: 'Источники: bim.com.tr · sokmarket.com.tr · migros.com.tr · цены и фото принадлежат магазинам · убрать данные: bezzimeni17@gmail.com',
+    search: 'Найти товар или бренд…', menu: 'Магазины', allStores: 'Все магазины', all: 'Все акции', category: 'Все категории',
+    deals: (n) => `${n.toLocaleString('ru-RU')} ${plural(n, ['акция', 'акции', 'акций'])}`,
+    more: 'Показать ещё', empty: 'Ничего не найдено', error: 'Не удалось загрузить данные. Попробуйте позже.',
+    sort: { disc: 'Самая большая скидка', fresh: 'Сначала новые', asc: 'Сначала дешёвые', desc: 'Сначала дорогие', name: 'По названию' },
+    types: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк Win', clearance: 'Распродажа', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Другие акции' },
+    allTypes: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк', clearance: 'Распродажа', catalog: 'Каталог акций', goodprice: 'Выгодная цена', promo: 'Другие акции' },
+    bimIndirim: 'Скидки İndirim', onSale: 'Уже в продаже', soon: 'Скоро', fresh: 'Новые', ekstra: 'Ekstra (техника, одежда)',
+    money: 'С картой Money', newBadge: 'НОВОЕ',
+    startsIn: (n) => n <= 0 ? 'Начинается сегодня' : n === 1 ? 'Начнётся завтра' : `Начнётся через ${n} ${plural(n, ['день', 'дня', 'дней'])}`,
+    endsIn: (n) => n <= 0 ? 'Последний день' : n === 1 ? 'Остался 1 день' : `Осталось ${n} ${plural(n, ['день', 'дня', 'дней'])}`,
+    since: (d) => `В продаже с ${d}`, seenSince: (d) => `Акция с ${d}`, foundAgo: (t) => `Найдено ${t}`,
+    ago: (m) => m < 1 ? 'только что' : m < 60 ? `${m} мин назад` : m < 1440 ? `${Math.floor(m / 60)} ч назад` : `${Math.floor(m / 1440)} дн назад`,
+    every: (h) => h === 1 ? 'проверка каждый час' : h % 24 === 0 ? (h === 24 ? 'проверка раз в день' : `проверка раз в ${h / 24} дня`) : `проверка каждые ${h} ч`,
+    updated: (t) => `обновлено ${t}`, stale: 'не обновилось — показаны прошлые данные',
+    note: 'Цены и фото принадлежат магазинам; по клику открывается страница товара в магазине. У Migros скидочная цена действует с бесплатной картой Money. В магазине цена может отличаться, количество ограничено.',
+    footer: 'Источники: bim.com.tr · sokmarket.com.tr · migros.com.tr · убрать данные: bezzimeni17@gmail.com',
     locale: 'ru-RU',
   },
   tr: {
-    title: 'Haftanın<br>indirimleri', search: 'Ürün veya marka ara…', allStores: 'Tüm marketler',
-    deals: 'Tüm fırsatlar', soon: 'Yakında', category: 'Tüm kategoriler',
-    types: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Para iade', clearance: 'Stok eritme', catalog: 'Kampanya kataloğu', goodprice: 'İyi fiyat', promo: 'Diğer kampanyalar' },
-    products: (n) => `${n.toLocaleString('tr-TR')} ürün`, updated: 'güncellendi',
-    stale: 'veri güncellenemedi', more: 'Daha fazla göster',
-    sort: { disc: 'En çok indirim', asc: 'Önce ucuz', desc: 'Önce pahalı', name: 'Ada göre' },
-    onSale: (d) => `${d} tarihinden beri satışta`, startsOn: (d) => `${d} tarihinde`, until: (d) => `${d} tarihine kadar`, from: (d) => `${d} tarihinden itibaren`,
-    money: "Money Kart'la", empty: 'Sonuç bulunamadı', error: 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.',
-    nav: { 'all-products': 'Tüm ürünler', deals: 'İndirim', home: 'Ana sayfa', soon: 'Yakında', search: 'Ara' },
-    about: '<b>RevoSell</b> Türkiye marketlerinin kampanya ve fiyatlarını toplar: <b>BİM</b> (Aktüel ve İndirim), <b>ŞOK</b> (Market ve Ekstra online katalog) ve <b>Migros</b> (Sanal Market). Veriler günde iki kez güncellenir ve kontrol edilir: fiyat, eski fiyat, görsel ve link ürün sayfasıyla karşılaştırılır. Migros indirimli fiyatları <b>ücretsiz Money Kart</b> ile geçerlidir. Fiyat ve görseller marketlere aittir; tıklayınca marketin ürün sayfası açılır. Mağazadaki fiyat farklı olabilir, stoklarla sınırlıdır.',
-    footer: 'Kaynaklar: bim.com.tr · sokmarket.com.tr · migros.com.tr · fiyat ve görseller marketlere aittir · kaldırma talebi: bezzimeni17@gmail.com',
+    search: 'Ürün veya marka ara…', menu: 'Marketler', allStores: 'Tüm marketler', all: 'Tüm fırsatlar', category: 'Tüm kategoriler',
+    deals: (n) => `${n.toLocaleString('tr-TR')} fırsat`,
+    more: 'Daha fazla göster', empty: 'Sonuç bulunamadı', error: 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.',
+    sort: { disc: 'En çok indirim', fresh: 'Önce yeniler', asc: 'Önce ucuz', desc: 'Önce pahalı', name: 'Ada göre' },
+    types: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Win Para', clearance: 'Stok eritme', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Diğer kampanyalar' },
+    allTypes: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Para iade', clearance: 'Stok eritme', catalog: 'Kampanya kataloğu', goodprice: 'İyi fiyat', promo: 'Diğer kampanyalar' },
+    bimIndirim: 'İndirim', onSale: 'Satışta', soon: 'Yakında', fresh: 'Yeni', ekstra: 'Ekstra',
+    money: "Money Kart'la", newBadge: 'YENİ',
+    startsIn: (n) => n <= 0 ? 'Bugün başlıyor' : n === 1 ? 'Yarın başlıyor' : `${n} gün sonra başlıyor`,
+    endsIn: (n) => n <= 0 ? 'Son gün' : `${n} gün kaldı`,
+    since: (d) => `${d} tarihinden beri satışta`, seenSince: (d) => `${d} tarihinden beri`, foundAgo: (t) => `${t} bulundu`,
+    ago: (m) => m < 1 ? 'az önce' : m < 60 ? `${m} dk önce` : m < 1440 ? `${Math.floor(m / 60)} sa önce` : `${Math.floor(m / 1440)} gün önce`,
+    every: (h) => h === 1 ? 'her saat kontrol' : h % 24 === 0 ? (h === 24 ? 'günde bir kontrol' : `${h / 24} günde bir kontrol`) : `her ${h} saatte kontrol`,
+    updated: (t) => `güncellendi ${t}`, stale: 'güncellenemedi — önceki veriler gösteriliyor',
+    note: 'Fiyat ve görseller marketlere aittir; tıklayınca marketin ürün sayfası açılır. Migros indirimli fiyatları ücretsiz Money Kart ile geçerlidir. Mağazadaki fiyat farklı olabilir, stoklarla sınırlıdır.',
+    footer: 'Kaynaklar: bim.com.tr · sokmarket.com.tr · migros.com.tr · kaldırma talebi: bezzimeni17@gmail.com',
     locale: 'tr-TR',
   },
 };
@@ -174,103 +191,133 @@ function plural(n, f) { const a = n % 10, b = n % 100; return a === 1 && b !== 1
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const icon = (name, w = 'ph') => el('i', `${w} ph-${name}`);
-// Search ignores case and Turkish letters: "cikolata" finds "Çikolata".
 const fold = (s) => (s || '').toLocaleLowerCase('tr').replace(/[çğıöşüâî]/g, (c) => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', â: 'a', î: 'i' }[c]));
-const todayIso = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
-const PAGE = 48;
+const todayIso = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
+const daysBetween = (a, b) => Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 864e5);
+const minutesAgo = (iso) => Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 6e4));
+const PAGE = 48, NEW_HOURS = 48;
 
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
 let lang = store.get('lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'ru');
-const state = { store: 'all', mode: 'deals', type: null, period: null, category: '', sort: 'disc', shown: PAGE };
+const state = { store: store.get('store') || 'all', chip: 'all', category: '', sort: 'disc', shown: PAGE };
 let DATA = null, STORES = {}, current = [];
 const T = () => I18N[lang];
 
-const dayFmt = () => new Intl.DateTimeFormat(T().locale, { day: 'numeric', month: 'short', timeZone: 'UTC' });
-const weekFmt = () => new Intl.DateTimeFormat(T().locale, { day: 'numeric', month: 'short', weekday: 'short', timeZone: 'UTC' });
-const d = (iso) => dayFmt().format(new Date(iso + 'T00:00:00Z'));
+const fmt = (opts) => new Intl.DateTimeFormat(T().locale, { timeZone: 'UTC', ...opts });
+const dayLabel = (iso) => fmt({ day: 'numeric', month: 'short' }).format(new Date(iso + 'T00:00:00Z'));
+const weekLabel = (iso) => fmt({ day: 'numeric', month: 'short', weekday: 'short' }).format(new Date(iso + 'T00:00:00Z'));
 const money = (n) => new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n) + ' ₺';
 const abs = (rel, base) => (rel == null ? null : rel.startsWith('!') ? rel.slice(1) : base + rel);
 
-const expired = (p) => p.vt && p.vt < todayIso;
-const future = (p) => p.vf && p.vf > todayIso;
+const expired = (p) => p.vt && p.vt < todayIso();
+const future = (p) => p.vf && p.vf > todayIso();
+const isNew = (p) => p.fs && (Date.now() - Date.parse(p.fs)) / 36e5 < NEW_HOURS;
+const istDate = (iso) => new Date(iso).toLocaleDateString('sv-SE', { timeZone: 'Europe/Istanbul' });
 
-function matches(p) {
-  if (expired(p)) return false;
-  if (state.store !== 'all' && p.s !== state.store) return false;
-  if (state.mode === 'type' && !p.t.includes(state.type)) return false;
-  if (state.mode === 'soon' && !future(p)) return false;
-  if (state.mode === 'period' && p.pk !== state.period) return false;
-  if (state.category && p.c !== state.category) return false;
-  return true;
+// Chips depend on the store. Each: [key, label, filter]; hidden when empty.
+function chipDefs() {
+  const t = T();
+  if (state.store === 'bim') {
+    const defs = [['all', t.all, () => true], ['indirim', t.bimIndirim, (p) => p.t.includes('discount')],
+      ['onsale', t.onSale, (p) => p.t.includes('catalog') && !future(p)], ['soon', t.soon, future]];
+    for (const per of (DATA.periods || []).filter((x) => x.section === 'aktuel' && x.validFrom).sort((a, b) => a.validFrom.localeCompare(b.validFrom)))
+      defs.push(['pk:' + per.key, weekLabel(per.validFrom), (p) => p.pk === per.key]);
+    return defs;
+  }
+  const order = state.store === 'sok' ? ['discount', 'basket', 'cashback', 'multi', 'promo']
+    : state.store === 'migros' ? ['card', 'multi', 'basket', 'clearance', 'catalog', 'goodprice', 'promo']
+    : ['discount', 'card', 'multi', 'basket', 'cashback', 'clearance', 'catalog', 'goodprice', 'promo'];
+  const labels = state.store === 'all' ? t.allTypes : t.types;
+  const defs = [['all', t.all, () => true], ...order.map((k) => [k, labels[k], (p) => p.t.includes(k)]), ['fresh', t.fresh, isNew]];
+  if (state.store === 'sok') defs.push(['ekstra', t.ekstra, (p) => p.e]);
+  if (state.store === 'all') defs.push(['soon', t.soon, future]);
+  return defs;
 }
+const inStore = (p) => !expired(p) && (state.store === 'all' || p.s === state.store);
+const chipFilter = () => { const d = chipDefs(); return (d.find((x) => x[0] === state.chip) || d[0])[2]; };
 
 function renderStatic() {
   document.documentElement.lang = lang;
   $('q').placeholder = T().search;
   $('footer').textContent = T().footer;
   $('more').textContent = T().more;
+  $('menuTitle').textContent = T().menu;
+  $('menuNote').textContent = T().note;
+  $('storeTitle').textContent = STORES[state.store] ? '· ' + STORES[state.store].name : '';
   document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang));
   $('sortsheet').replaceChildren(...Object.entries(T().sort).map(([k, label]) => {
     const b = el('button', 'chip', label); b.type = 'button'; b.setAttribute('aria-pressed', k === state.sort);
     b.onclick = () => { state.sort = k; renderStatic(); render(); };
     return b;
   }));
+  if (DATA) renderMenu();
 }
 
-function chip(label, n, pressed, onclick, cls = 'chip') {
-  const b = el('button', cls, label); b.type = 'button';
+// Green: updated on schedule; yellow: a check was missed; red: failed or long overdue.
+function freshness(s) {
+  if (s.stale) return ['bad', T().stale];
+  const m = minutesAgo(s.fetchedAt);
+  const level = m <= s.every * 90 ? 'ok' : m <= s.every * 180 ? 'warn' : 'bad';
+  return [level, `${T().updated(T().ago(m))} · ${T().every(s.every)}`];
+}
+
+function renderMenu() {
+  const live = DATA.products.filter((p) => !expired(p));
+  const rows = [{ id: 'all', name: T().allStores, ico: '∗', n: live.length },
+    ...DATA.stores.map((s) => ({ id: s.id, name: s.name, ico: s.name.slice(0, 1), n: live.filter((p) => p.s === s.id).length, s }))];
+  $('storeList').replaceChildren(...rows.map((r) => {
+    const b = el('button', 'store-btn'); b.type = 'button'; b.setAttribute('aria-current', state.store === r.id);
+    const info = el('span', 'info'); info.append(el('div', 'nm', r.name));
+    if (r.s) { const [lvl, txt] = freshness(r.s); const sub = el('div', 'sub'); sub.append(el('span', 'dot ' + lvl), document.createTextNode(txt)); info.append(sub); }
+    b.append(el('span', 'ico', r.ico), info, el('span', 'n', r.n.toLocaleString(T().locale)));
+    b.onclick = () => { setStore(r.id); closeMenu(); };
+    return b;
+  }));
+}
+
+function chip(label, n, pressed, onclick) {
+  const b = el('button', 'chip', label); b.type = 'button';
   if (n != null) b.append(el('small', '', n.toLocaleString(T().locale)));
   b.setAttribute('aria-pressed', pressed); b.onclick = onclick;
   return b;
 }
 
 function renderChips() {
-  const live = DATA.products.filter((p) => !expired(p));
-  const inMode = (p) => state.mode === 'type' ? p.t.includes(state.type) : state.mode === 'soon' ? future(p) : true;
-  $('stores').replaceChildren(
-    chip(T().allStores, live.filter(inMode).length, state.store === 'all', () => setStore('all'), 'chip store'),
-    ...DATA.stores.map((s) => chip(s.name, live.filter((p) => p.s === s.id && inMode(p)).length, state.store === s.id, () => setStore(s.id), 'chip store')));
-
-  // deal-type row
-  const scope = live.filter((p) => state.store === 'all' || p.s === state.store);
-  const tabs = [chip(T().deals, scope.length, state.mode === 'deals', () => setMode('deals'))];
-  for (const [t, label] of Object.entries(T().types)) {
-    const n = scope.filter((p) => p.t.includes(t)).length;
-    if (n) tabs.push(chip(label, n, state.mode === 'type' && state.type === t, () => { state.type = t; setMode('type'); }));
+  const scope = DATA.products.filter(inStore);
+  const defs = chipDefs();
+  if (!defs.some((d) => d[0] === state.chip)) state.chip = 'all';
+  const tabs = [];
+  for (const [key, label, f] of defs) {
+    const n = scope.filter(f).length;
+    if (n || key === 'all') tabs.push(chip(label, n, state.chip === key, () => { state.chip = key; state.shown = PAGE; renderChips(); render(); }));
   }
-  const soonN = scope.filter(future).length;
-  if (soonN) tabs.push(chip(T().soon, soonN, state.mode === 'soon', () => setMode('soon')));
-  if (state.store === 'bim') {
-    for (const per of DATA.periods.filter((x) => x.section === 'aktuel' && x.validFrom).sort((a, b) => a.validFrom.localeCompare(b.validFrom))) {
-      const n = scope.filter((p) => p.pk === per.key).length;
-      if (n) tabs.push(chip(weekFmt().format(new Date(per.validFrom + 'T00:00:00Z')), n, state.mode === 'period' && state.period === per.key, () => { state.period = per.key; setMode('period'); }));
-    }
-  }
-  // category picker
+  const f = chipFilter();
   const cats = new Map();
-  for (const p of scope) if (p.c && matchesMode(p)) cats.set(p.c, (cats.get(p.c) || 0) + 1);
+  for (const p of scope) if (p.c && f(p)) cats.set(p.c, (cats.get(p.c) || 0) + 1);
   if (cats.size > 1) {
     const wrap = el('label', 'chip'); wrap.setAttribute('aria-pressed', !!state.category);
     wrap.append(icon('squares-four'));
     const sel = el('select'); sel.setAttribute('aria-label', T().category);
     sel.append(new Option(T().category, ''));
     [...cats.entries()].sort((a, b) => a[0].localeCompare(b[0], 'tr')).forEach(([c, n]) => sel.append(new Option(`${c} (${n})`, c)));
-    sel.value = cats.has(state.category) ? state.category : '';
     if (!cats.has(state.category)) state.category = '';
+    sel.value = state.category;
     sel.onchange = () => { state.category = sel.value; state.shown = PAGE; renderChips(); render(); };
     wrap.append(sel); tabs.push(wrap);
   } else state.category = '';
   $('chips').replaceChildren(...tabs);
 }
-function matchesMode(p) { const c = state.category; state.category = ''; const r = matches(p); state.category = c; return r; }
 
 function tagsFor(p) {
-  const out = [];
+  const out = [], t = T(), today = todayIso();
   if (p.s === 'bim') {
-    if (future(p)) out.push(['soon', 'clock', p.t.includes('discount') ? T().from(d(p.vf)) : T().startsOn(d(p.vf))]);
-    else out.push(['', 'check-circle', p.t.includes('discount') && p.vt ? T().until(d(p.vt)) : T().onSale(d(p.vf))]);
+    if (future(p)) out.push(['soon', 'clock', t.startsIn(daysBetween(today, p.vf))]);
+    else if (p.vt) { const left = daysBetween(today, p.vt); out.push([left <= 1 ? 'end' : '', 'hourglass-medium', t.endsIn(left)]); }
+    else if (p.vf) out.push(['', 'check-circle', t.since(dayLabel(p.vf))]);
+  } else if (p.fs) {
+    out.push(['seen', 'clock-counter-clockwise', isNew(p) ? t.foundAgo(t.ago(minutesAgo(p.fs))) : t.seenSince(dayLabel(istDate(p.fs)))]);
   }
-  if (p.m === 'money') out.push(['money', 'credit-card', T().money]);
+  if (p.m === 'money') out.push(['money', 'credit-card', t.money]);
   for (const pr of p.pr || []) out.push(['promo', 'gift', pr]);
   return out;
 }
@@ -283,17 +330,17 @@ function card(p) {
   img.src = abs(p.i, s.img); img.alt = [p.b, p.n].filter(Boolean).join(' ');
   pic.append(img);
   if (p.o) pic.append(el('span', 'badge', '−' + p.d + '%'));
-  pic.append(el('span', 'storetag', s.name));
+  if (state.store === 'all') pic.append(el('span', 'storetag', s.name));
+  if (isNew(p)) pic.append(el('span', 'newbadge', T().newBadge));
   const body = el('div', 'body');
   const tags = tagsFor(p);
   if (tags.length) {
-    const t = el('div', 'tags');
-    for (const [cls, ic, text] of tags) { const x = el('span', 'tag ' + cls); x.append(icon(ic, 'ph-bold'), document.createTextNode(text)); t.append(x); }
-    body.append(t);
+    const box = el('div', 'tags');
+    for (const [cls, ic, text] of tags) { const x = el('span', 'tag ' + cls); x.append(icon(ic, 'ph-bold'), document.createTextNode(text)); box.append(x); }
+    body.append(box);
   }
   if (p.b) body.append(el('div', 'brand', p.b));
   body.append(el('div', 'name', p.n));
-  if (p.q) { const q = el('div', 'qty'); q.append(icon('package'), document.createTextNode(p.q)); body.append(q); }
   const row = el('div', 'row'); const pr = el('div', 'prices');
   if (p.o) pr.append(el('span', 'old', money(p.o)));
   pr.append(el('span', 'price', money(p.p)));
@@ -304,15 +351,17 @@ function card(p) {
 }
 
 function render() {
-  const q = fold($('q').value.trim());
-  const words = q.split(/\s+/).filter(Boolean);
+  const words = fold($('q').value.trim()).split(/\s+/).filter(Boolean);
+  const f = chipFilter();
   const sorters = {
     disc: (a, b) => (b.d || 0) - (a.d || 0) || b.t.length - a.t.length || a.p - b.p,
+    fresh: (a, b) => (b.fs || '').localeCompare(a.fs || '') || (b.d || 0) - (a.d || 0),
     asc: (a, b) => a.p - b.p, desc: (a, b) => b.p - a.p,
     name: (a, b) => a.n.localeCompare(b.n, 'tr'),
   };
-  current = DATA.products.filter((p) => matches(p) && (!words.length || words.every((w) => p._f.includes(w)))).sort(sorters[state.sort]);
-  $('count').textContent = T().products(current.length);
+  current = DATA.products.filter((p) => inStore(p) && f(p) && (!state.category || p.c === state.category)
+    && (!words.length || words.every((w) => p._f.includes(w)))).sort(sorters[state.sort]);
+  $('count').textContent = T().deals(current.length);
   if (!current.length) {
     const e = el('div', 'empty'); e.append(icon('smiley-sad'), document.createTextNode(T().empty));
     $('grid').replaceChildren(e); $('more').hidden = true; return;
@@ -327,22 +376,31 @@ function showMore() {
   $('more').hidden = current.length <= state.shown;
 }
 
-function setStore(s) { state.store = s; state.shown = PAGE; if (state.mode === 'period' && s !== 'bim') state.mode = 'deals'; renderChips(); render(); }
-function setMode(m) { state.mode = m; state.shown = PAGE; renderChips(); render(); window.scrollTo({ top: $('stores').offsetTop - 12 }); }
+function setStore(id) {
+  state.store = id === 'all' || STORES[id] ? id : 'all'; store.set('store', state.store);
+  state.chip = 'all'; state.category = ''; state.shown = PAGE;
+  renderStatic(); renderChips(); render(); window.scrollTo({ top: 0 });
+}
+const openMenu = () => document.body.classList.add('menu');
+const closeMenu = () => document.body.classList.remove('menu');
 
 document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => { lang = b.dataset.lang; store.set('lang', lang); renderStatic(); if (DATA) { renderChips(); render(); } });
+$('menuBtn').onclick = openMenu; $('closeBtn').onclick = closeMenu; $('scrim').onclick = closeMenu;
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 $('sortBtn').onclick = (e) => { e.preventDefault(); $('sortsheet').classList.toggle('open'); };
 $('more').onclick = showMore;
 let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(() => { if (DATA) { state.shown = PAGE; render(); } }, 150); });
 new IntersectionObserver((es) => { if (es[0].isIntersecting && !$('more').hidden) showMore(); }, { rootMargin: '600px' }).observe($('more'));
+setInterval(() => { if (DATA) renderMenu(); }, 60000); // keep "N min ago" current
 
 renderStatic();
 fetch('data/products.json', { cache: 'no-cache' })
   .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .then((data) => {
     DATA = data;
-    for (const s of data.stores) STORES[s.id] = s;
+    for (const s of data.stores) STORES[s.id] = { every: 6, ...s };
     for (const p of data.products) p._f = fold(`${p.n} ${p.b || ''} ${p.c || ''} ${STORES[p.s].name}`);
+    if (state.store !== 'all' && !STORES[state.store]) state.store = 'all';
     renderStatic(); renderChips(); render();
   })
   .catch(() => { const e = el('div', 'empty'); e.append(icon('wifi-slash'), document.createTextNode(T().error)); $('grid').replaceChildren(e); });

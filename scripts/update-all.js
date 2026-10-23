@@ -13,6 +13,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { buildSiteData } from './build-site-data.js';
+import { carryFirstSeen } from '../src/history.js';
 
 const SITE = process.env.PAGES_URL ?? 'https://prostoyy17.github.io/Discounts';
 const STORES = [
@@ -44,17 +45,15 @@ async function previousPublished(id) {
 }
 
 const status = [];
+const save = async (id, data) => {
+  await fs.mkdir(path.dirname(dataFile(id)), { recursive: true });
+  await fs.writeFile(dataFile(id), JSON.stringify(data));
+};
+
+// 1) Crawl + verify the stores this run is for.
+const crawled = new Set();
 for (const store of STORES) {
-  if (only && !only.has(store.id)) continue;
-  if (reuse) {
-    const prev = await previousPublished(store.id);
-    if (prev) {
-      await fs.mkdir(path.dirname(dataFile(store.id)), { recursive: true });
-      await fs.writeFile(dataFile(store.id), JSON.stringify(prev));
-      status.push({ store: store.id, fresh: false, reason: 'yeniden kullanıldı', dataFrom: prev.fetchedAt });
-    } else status.push({ store: store.id, fresh: false, reason: 'yayımlanmış veri yok', dataFrom: null });
-    continue;
-  }
+  if (reuse || (only && !only.has(store.id))) continue;
   let ok = offline;
   let error = null;
   if (!offline) {
@@ -62,7 +61,14 @@ for (const store of STORES) {
     if (!ok) error = 'tarama reddedildi';
     else if (verify && !run(store.verify, ['--sample', '12'])) { ok = false; error = 'doğrulama başarısız'; }
   }
+  crawled.add(store.id);
   if (ok) {
+    if (!offline) {
+      const data = JSON.parse(await fs.readFile(dataFile(store.id), 'utf8'));
+      const fresh = carryFirstSeen(data, await previousPublished(store.id));
+      await save(store.id, data);
+      console.log(`  ${store.id}: ${fresh} yeni/değişen fırsat`);
+    }
     status.push({ store: store.id, fresh: true });
     continue;
   }
@@ -70,13 +76,25 @@ for (const store of STORES) {
   console.warn(`\n⚠ ${store.id}: ${error} — son yayımlanan veri kullanılacak`);
   const prev = await previousPublished(store.id);
   if (prev) {
-    prev.stale = { since: new Date().toISOString(), reason: error };
-    await fs.mkdir(path.dirname(dataFile(store.id)), { recursive: true });
-    await fs.writeFile(dataFile(store.id), JSON.stringify(prev));
+    prev.stale = { since: prev.stale?.since ?? new Date().toISOString(), reason: error };
+    await save(store.id, prev);
     status.push({ store: store.id, fresh: false, reason: error, dataFrom: prev.fetchedAt });
   } else {
     await fs.rm(dataFile(store.id), { force: true });
     status.push({ store: store.id, fresh: false, reason: error, dataFrom: null });
+  }
+}
+
+// 2) Every other store keeps its live data. Fetched after the crawls, so a
+//    long run does not overwrite another store's newer publication.
+if (!offline) {
+  for (const store of STORES) {
+    if (crawled.has(store.id)) continue;
+    const prev = await previousPublished(store.id);
+    if (prev) {
+      await save(store.id, prev);
+      status.push({ store: store.id, fresh: false, reason: 'yayındaki veri', dataFrom: prev.fetchedAt });
+    } else status.push({ store: store.id, fresh: false, reason: 'yayımlanmış veri yok', dataFrom: null });
   }
 }
 
