@@ -15,9 +15,9 @@ import { dealTypes } from '../src/deals.js';
 
 const META = {
   // every: planned crawl interval in hours (see .github/workflows/pages.yml)
-  bim: { name: 'BİM', every: 8, img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
-  sok: { name: 'ŞOK', every: 24, img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
-  migros: { name: 'Migros', every: 48, img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
+  bim: { name: 'BİM', every: 8, logo: 'https://cdn2.bim.com.tr/templates/images/bim-logo-single.png', img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
+  sok: { name: 'ŞOK', every: 24, logo: 'https://images.ceptesok.com/logos/service-types/market-logo.svg', img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
+  migros: { name: 'Migros', every: 48, logo: 'https://www.migros.com.tr/assets/images/seo/new/apple-touch-icon-152x152.png', img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
 };
 
 // Same promo rules as the current parsers, so data published by an older
@@ -58,7 +58,7 @@ export async function buildSiteData(storeIds, dir = 'site/data') {
     const all = data.products.filter((p) => p.inStock !== false).map((p) => ({ ...p, promotions: cleanPromos(p.promotions) }));
     const list = all.filter((p) => dealTypes(p).length);
     stores.push({
-      id, name: meta.name, img: meta.img, url: meta.url, source: data.source,
+      id, name: meta.name, logo: meta.logo, img: meta.img, url: meta.url, source: data.source,
       fetchedAt: data.fetchedAt, stale: data.stale ?? null, every: meta.every, trackingSince: data.trackingSince ?? null,
       count: list.length, discounts: list.filter((p) => p.oldPrice).length, catalogSize: all.length,
     });

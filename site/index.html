@@ -78,15 +78,19 @@ input{font:inherit;color:inherit;border:0;outline:0;background:none}
 footer{color:var(--muted);font-size:.75rem;padding:24px 0 8px;text-align:center}
 
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(360px,88vw);background:var(--bg);z-index:21;transform:translateX(100%);transition:transform .25s ease;padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;box-shadow:-10px 0 30px rgba(0,0,0,.12)}
+.drawer{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;bottom:calc(12px + env(safe-area-inset-bottom));width:min(360px,calc(100vw - 48px));background:var(--bg);z-index:21;border-radius:30px;transform:translateX(calc(100% + 24px));visibility:hidden;transition:transform .25s ease,visibility 0s .25s;padding:16px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.18)}
 body.menu .scrim{opacity:1;pointer-events:auto}
-body.menu .drawer{transform:none}
+body.menu .drawer{transform:none;visibility:visible;transition:transform .25s ease}
+.drawer-foot{margin-top:auto;background:var(--surface);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+.drawer-foot .lang{box-shadow:none;background:var(--bg)}
 .drawer-head{display:flex;align-items:center;justify-content:space-between}
 .drawer-head b{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.2rem;text-transform:uppercase}
 .store-list{display:flex;flex-direction:column;gap:8px}
 .store-btn{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:22px;padding:12px 14px;box-shadow:var(--shadow);text-align:left;width:100%}
 .store-btn[aria-current=true]{background:var(--ink);color:#fff}
-.store-btn .ico{width:40px;height:40px;border-radius:50%;background:var(--lime);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none}
+.store-btn .ico{width:44px;height:44px;border-radius:14px;background:#fff;color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.06)}
+.store-btn .ico.all{background:var(--lime);border-radius:50%;box-shadow:none}
+.store-btn .ico img{width:100%;height:100%;object-fit:contain;padding:4px}
 .store-btn .info{flex:1;min-width:0}
 .store-btn .nm{font-weight:700}
 .store-btn .sub{font-size:.74rem;display:flex;align-items:center;gap:6px;color:var(--muted)}
@@ -138,11 +142,13 @@ body.menu .drawer{transform:none}
 <aside class="drawer" id="drawer" aria-label="Меню">
   <div class="drawer-head"><b id="menuTitle"></b><button class="burger" type="button" id="closeBtn" aria-label="Закрыть"><i class="ph-bold ph-x"></i></button></div>
   <div class="store-list" id="storeList"></div>
-  <div class="lang" role="group" aria-label="Язык">
-    <button type="button" data-lang="ru">RU</button>
-    <button type="button" data-lang="tr">TR</button>
+  <div class="drawer-foot">
+    <div class="lang" role="group" aria-label="Язык">
+      <button type="button" data-lang="ru">RU</button>
+      <button type="button" data-lang="tr">TR</button>
+    </div>
+    <small id="menuNote"></small>
   </div>
-  <small id="menuNote"></small>
 </aside>
 
 <script>
@@ -263,13 +269,19 @@ function freshness(s) {
 
 function renderMenu() {
   const live = DATA.products.filter((p) => !expired(p));
-  const rows = [{ id: 'all', name: T().allStores, ico: '∗', n: live.length },
+  const rows = [{ id: 'all', name: T().allStores, ico: null, n: live.length },
     ...DATA.stores.map((s) => ({ id: s.id, name: s.name, ico: s.name.slice(0, 1), n: live.filter((p) => p.s === s.id).length, s }))];
   $('storeList').replaceChildren(...rows.map((r) => {
     const b = el('button', 'store-btn'); b.type = 'button'; b.setAttribute('aria-current', state.store === r.id);
     const info = el('span', 'info'); info.append(el('div', 'nm', r.name));
     if (r.s) { const [lvl, txt] = freshness(r.s); const sub = el('div', 'sub'); sub.append(el('span', 'dot ' + lvl), document.createTextNode(txt)); info.append(sub); }
-    b.append(el('span', 'ico', r.ico), info, el('span', 'n', r.n.toLocaleString(T().locale)));
+    const ico = el('span', r.s ? 'ico' : 'ico all');
+    if (r.s?.logo) {
+      const img = el('img'); img.alt = r.name; img.referrerPolicy = 'no-referrer'; img.src = r.s.logo;
+      img.onerror = () => img.replaceWith(document.createTextNode(r.name.slice(0, 1)));
+      ico.append(img);
+    } else ico.append(icon('storefront', 'ph-bold'));
+    b.append(ico, info, el('span', 'n', r.n.toLocaleString(T().locale)));
     b.onclick = () => { setStore(r.id); closeMenu(); };
     return b;
   }));
