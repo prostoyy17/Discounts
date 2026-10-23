@@ -109,8 +109,9 @@ export function normalize(r, { category } = {}) {
     discountPercent: discounted ? Math.round((1 - price / original) * 100) : null,
     currency: 'TRY',
     inStock: r.hasStock !== false,
-    promotions: [...(r.promotions ?? []), ...(r.badgePromotions ?? [])]
-      .map((p) => clean(p?.name ?? p?.title ?? p?.label ?? '')).filter(Boolean),
+    // Free delivery is a shipping perk, not a deal on the product.
+    promotions: [...new Set([...(r.promotions ?? []), ...(r.badgePromotions ?? [])]
+      .map((p) => clean(p?.name ?? p?.title ?? p?.label ?? '')).filter((t) => t && !/ücretsiz (teslimat|kargo)/i.test(t)))],
     image: imageUrl(prod.images),
     url: prod.path ? `${BASE}/${prod.path.replace(/^\//, '')}` : null,
     validFrom: null,

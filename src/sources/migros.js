@@ -43,7 +43,12 @@ export function parseListing(json) {
   return { hitCount: s.hitCount, pageCount: s.pageCount, items: s.storeProductInfos };
 }
 
+// Badges that mean a deal (CROSS_PROMOTED "2 Al 1 Öde", DELIST_SALEABLE
+// "Stokları bitiriyoruz", GREAT_PRICE "İyi Fiyat") and marketing groups that are
+// campaigns (Migroskop catalog, Kapış Kapış flash deals). Labels like "Yeni",
+// "Protein Rotası", "Pestisit Analizli" are not deals and are dropped.
 const PROMO_BADGES = { CROSS_PROMOTED: true, GREAT_PRICE: true, DELIST_SALEABLE: true };
+const CAMPAIGN_GROUPS = new Set(['Migroskop', 'Kapış Kapış']);
 
 /** One listing item -> RevoSell product record. */
 export function normalize(p) {
@@ -54,7 +59,8 @@ export function normalize(p) {
   const root = roots[roots.length - 1] ?? p.category;
   const promotions = [
     ...(p.badges ?? []).filter((b) => PROMO_BADGES[b.name]).map((b) => clean(b.value)),
-    ...(p.crmDiscountTags ?? []).map((t) => clean(t.tag) + ' (Money)'),
+    ...(p.crmDiscountTags ?? []).map((t) => clean(t.tag)),
+    ...(p.groupBadgeMap?.MARKETING ?? []).map((b) => clean(b.name)).filter((n) => CAMPAIGN_GROUPS.has(n)),
   ].filter(Boolean);
   return {
     store: 'migros',

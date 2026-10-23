@@ -3,13 +3,14 @@
 // Pages also gzips it). Runnable alone: node scripts/build-site-data.js
 //
 // Product keys: s store, id, n name, b brand, c category, p price, o old price,
+// t deal types (src/deals.js),
 // d discount %, m price condition ("money"), pr promotions, i image (relative
-// to store.img), u link (relative to store.url), k kind (a aktüel, i indirim,
-// c catalog), vf/vt valid from/to, pk BİM period key, x out of stock, e Ekstra.
+// to store.img), u link (relative to store.url), vf/vt valid from/to, pk BİM period key, x out of stock, e Ekstra.
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { dealTypes } from '../src/deals.js';
 
 const META = {
   bim: { name: 'BİM', img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
@@ -20,8 +21,7 @@ const META = {
 const rel = (full, base) => (full && full.startsWith(base) ? full.slice(base.length) : full ? `!${full}` : null);
 
 function compact(p, meta) {
-  const kind = p.store === 'bim' ? (p.section === 'indirim' ? 'i' : 'a') : p.oldPrice ? 'i' : 'c';
-  const o = { s: p.store, id: p.id, n: p.name, p: p.price, k: kind, i: rel(p.image, meta.img), u: rel(p.url, meta.url) };
+  const o = { s: p.store, id: p.id, n: p.name, p: p.price, t: dealTypes(p), i: rel(p.image, meta.img), u: rel(p.url, meta.url) };
   if (p.brand) o.b = p.brand;
   if (p.category) o.c = p.category;
   if (p.quantity) o.q = p.quantity;
@@ -45,11 +45,13 @@ export async function buildSiteData(storeIds, dir = 'site/data') {
     try { data = JSON.parse(await fs.readFile(path.join(dir, `${id}.json`), 'utf8')); }
     catch { continue; }
     const meta = META[id];
-    const list = data.products.filter((p) => p.inStock !== false);
+    // Only products with some saving; out-of-stock items are dropped too.
+    const all = data.products.filter((p) => p.inStock !== false);
+    const list = all.filter((p) => dealTypes(p).length);
     stores.push({
       id, name: meta.name, img: meta.img, url: meta.url, source: data.source,
       fetchedAt: data.fetchedAt, stale: data.stale ?? null,
-      count: list.length, discounts: list.filter((p) => p.oldPrice).length,
+      count: list.length, discounts: list.filter((p) => p.oldPrice).length, catalogSize: all.length,
     });
     for (const p of list) products.push(compact(p, meta));
     if (id === 'bim') periods = data.periods.map(({ key, label, section, validFrom, validTo }) => ({ key, label, section, validFrom, validTo }));

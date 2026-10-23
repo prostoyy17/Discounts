@@ -142,7 +142,8 @@ footer{color:var(--muted);font-size:.78rem;padding:28px 0 8px;text-align:center}
 const I18N = {
   ru: {
     title: 'Лови скидки<br>недели', search: 'Найти товар или бренд…', allStores: 'Все магазины',
-    deals: 'Акции и скидки', all: 'Все товары', discounts: 'Скидки %', soon: 'Скоро', category: 'Все категории',
+    deals: 'Все акции', soon: 'Скоро', category: 'Все категории',
+    types: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк', clearance: 'Распродажа', catalog: 'Каталог акций', goodprice: 'Выгодная цена', promo: 'Другие акции' },
     products: (n) => `${n.toLocaleString('ru-RU')} ${plural(n, ['товар', 'товара', 'товаров'])}`, updated: 'обновлено',
     stale: 'данные не обновились', more: 'Показать ещё',
     sort: { disc: 'Самая большая скидка', asc: 'Сначала дешёвые', desc: 'Сначала дорогие', name: 'По названию' },
@@ -155,7 +156,8 @@ const I18N = {
   },
   tr: {
     title: 'Haftanın<br>indirimleri', search: 'Ürün veya marka ara…', allStores: 'Tüm marketler',
-    deals: 'Kampanyalar', all: 'Tüm ürünler', discounts: '% İndirim', soon: 'Yakında', category: 'Tüm kategoriler',
+    deals: 'Tüm fırsatlar', soon: 'Yakında', category: 'Tüm kategoriler',
+    types: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Para iade', clearance: 'Stok eritme', catalog: 'Kampanya kataloğu', goodprice: 'İyi fiyat', promo: 'Diğer kampanyalar' },
     products: (n) => `${n.toLocaleString('tr-TR')} ürün`, updated: 'güncellendi',
     stale: 'veri güncellenemedi', more: 'Daha fazla göster',
     sort: { disc: 'En çok indirim', asc: 'Önce ucuz', desc: 'Önce pahalı', name: 'Ada göre' },
@@ -179,7 +181,7 @@ const PAGE = 48;
 
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
 let lang = store.get('lang') || ((navigator.language || '').startsWith('tr') ? 'tr' : 'ru');
-const state = { store: 'all', mode: 'deals', period: null, category: '', sort: 'disc', shown: PAGE };
+const state = { store: 'all', mode: 'deals', type: null, period: null, category: '', sort: 'disc', shown: PAGE };
 let DATA = null, STORES = {}, current = [];
 const T = () => I18N[lang];
 
@@ -189,15 +191,13 @@ const d = (iso) => dayFmt().format(new Date(iso + 'T00:00:00Z'));
 const money = (n) => new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 2 }).format(n) + ' ₺';
 const abs = (rel, base) => (rel == null ? null : rel.startsWith('!') ? rel.slice(1) : base + rel);
 
-const isDeal = (p) => p.k === 'i' || p.k === 'a' || !!p.pr;
 const expired = (p) => p.vt && p.vt < todayIso;
 const future = (p) => p.vf && p.vf > todayIso;
 
 function matches(p) {
   if (expired(p)) return false;
   if (state.store !== 'all' && p.s !== state.store) return false;
-  if (state.mode === 'deals' && !isDeal(p)) return false;
-  if (state.mode === 'discounts' && !p.o) return false;
+  if (state.mode === 'type' && !p.t.includes(state.type)) return false;
   if (state.mode === 'soon' && !future(p)) return false;
   if (state.mode === 'period' && p.pk !== state.period) return false;
   if (state.category && p.c !== state.category) return false;
@@ -210,7 +210,6 @@ function renderStatic() {
   $('footer').textContent = T().footer;
   $('more').textContent = T().more;
   document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang));
-  document.querySelectorAll('#nav button').forEach((b) => { b.querySelector('.sr').textContent = T().nav[b.dataset.view]; b.setAttribute('aria-label', T().nav[b.dataset.view]); });
   $('sortsheet').replaceChildren(...Object.entries(T().sort).map(([k, label]) => {
     const b = el('button', 'chip', label); b.type = 'button'; b.setAttribute('aria-pressed', k === state.sort);
     b.onclick = () => { state.sort = k; renderStatic(); render(); };
@@ -227,19 +226,18 @@ function chip(label, n, pressed, onclick, cls = 'chip') {
 
 function renderChips() {
   const live = DATA.products.filter((p) => !expired(p));
-  // stores row
-  const inMode = (p) => state.mode === 'all' || state.mode === 'soon' || state.mode === 'period' ? true : state.mode === 'discounts' ? !!p.o : isDeal(p);
+  const inMode = (p) => state.mode === 'type' ? p.t.includes(state.type) : state.mode === 'soon' ? future(p) : true;
   $('stores').replaceChildren(
     chip(T().allStores, live.filter(inMode).length, state.store === 'all', () => setStore('all'), 'chip store'),
     ...DATA.stores.map((s) => chip(s.name, live.filter((p) => p.s === s.id && inMode(p)).length, state.store === s.id, () => setStore(s.id), 'chip store')));
 
-  // modes row
+  // deal-type row
   const scope = live.filter((p) => state.store === 'all' || p.s === state.store);
-  const tabs = [
-    chip(T().deals, scope.filter(isDeal).length, state.mode === 'deals', () => setMode('deals')),
-    chip(T().discounts, scope.filter((p) => p.o).length, state.mode === 'discounts', () => setMode('discounts')),
-    chip(T().all, scope.length, state.mode === 'all', () => setMode('all')),
-  ];
+  const tabs = [chip(T().deals, scope.length, state.mode === 'deals', () => setMode('deals'))];
+  for (const [t, label] of Object.entries(T().types)) {
+    const n = scope.filter((p) => p.t.includes(t)).length;
+    if (n) tabs.push(chip(label, n, state.mode === 'type' && state.type === t, () => { state.type = t; setMode('type'); }));
+  }
   const soonN = scope.filter(future).length;
   if (soonN) tabs.push(chip(T().soon, soonN, state.mode === 'soon', () => setMode('soon')));
   if (state.store === 'bim') {
@@ -263,16 +261,14 @@ function renderChips() {
     wrap.append(sel); tabs.push(wrap);
   } else state.category = '';
   $('chips').replaceChildren(...tabs);
-  document.querySelectorAll('#nav button').forEach((b) => b.setAttribute('aria-current',
-    (b.dataset.view === 'deals' && state.mode === 'discounts') || (b.dataset.view === 'all-products' && state.mode === 'all') || (b.dataset.view === 'soon' && state.mode === 'soon')));
 }
 function matchesMode(p) { const c = state.category; state.category = ''; const r = matches(p); state.category = c; return r; }
 
 function tagsFor(p) {
   const out = [];
   if (p.s === 'bim') {
-    if (future(p)) out.push(['soon', 'clock', p.k === 'i' ? T().from(d(p.vf)) : T().startsOn(d(p.vf))]);
-    else out.push(['', 'check-circle', p.k === 'i' && p.vt ? T().until(d(p.vt)) : T().onSale(d(p.vf))]);
+    if (future(p)) out.push(['soon', 'clock', p.t.includes('discount') ? T().from(d(p.vf)) : T().startsOn(d(p.vf))]);
+    else out.push(['', 'check-circle', p.t.includes('discount') && p.vt ? T().until(d(p.vt)) : T().onSale(d(p.vf))]);
   }
   if (p.m === 'money') out.push(['money', 'credit-card', T().money]);
   for (const pr of p.pr || []) out.push(['promo', 'gift', pr]);
@@ -311,7 +307,7 @@ function render() {
   const q = fold($('q').value.trim());
   const words = q.split(/\s+/).filter(Boolean);
   const sorters = {
-    disc: (a, b) => (b.d || 0) - (a.d || 0) || (isDeal(b) - isDeal(a)) || a.p - b.p,
+    disc: (a, b) => (b.d || 0) - (a.d || 0) || b.t.length - a.t.length || a.p - b.p,
     asc: (a, b) => a.p - b.p, desc: (a, b) => b.p - a.p,
     name: (a, b) => a.n.localeCompare(b.n, 'tr'),
   };
@@ -333,14 +329,8 @@ function showMore() {
 
 function setStore(s) { state.store = s; state.shown = PAGE; if (state.mode === 'period' && s !== 'bim') state.mode = 'deals'; renderChips(); render(); }
 function setMode(m) { state.mode = m; state.shown = PAGE; renderChips(); render(); window.scrollTo({ top: $('stores').offsetTop - 12 }); }
-function nav(v) {
-  if (v === 'search') { $('q').focus(); window.scrollTo({ top: 0 }); return; }
-  if (v === 'home') { state.store = 'all'; state.category = ''; $('q').value = ''; return setMode('deals'); }
-  setMode(v === 'all-products' ? 'all' : v === 'deals' ? 'discounts' : 'soon');
-}
 
 document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => { lang = b.dataset.lang; store.set('lang', lang); renderStatic(); if (DATA) { renderChips(); render(); } });
-document.querySelectorAll('#nav button').forEach((b) => b.onclick = () => nav(b.dataset.view));
 $('sortBtn').onclick = (e) => { e.preventDefault(); $('sortsheet').classList.toggle('open'); };
 $('more').onclick = showMore;
 let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(() => { if (DATA) { state.shown = PAGE; render(); } }, 150); });
