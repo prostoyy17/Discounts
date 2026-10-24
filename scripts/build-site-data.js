@@ -6,13 +6,14 @@
 // t deal types (src/deals.js),
 // d discount %, m price condition ("money"), pr promotions, i image (relative
 // to store.img), u link (relative to store.url), vf/vt valid from/to, pk BİM period key, x out of stock, e Ekstra,
-// fs first seen (ISO time; absent = unknown).
+// fs first seen (ISO time; absent = unknown), g product type (src/groups.js).
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { dealTypes } from '../src/deals.js';
+import { productGroup } from '../src/groups.js';
 
 const META = {
   // every: planned crawl interval in hours (see .github/workflows/pages.yml)
@@ -31,7 +32,7 @@ const cleanPromos = (list) => [...new Set((list ?? [])
 const rel = (full, base) => (full && full.startsWith(base) ? full.slice(base.length) : full ? `!${full}` : null);
 
 function compact(p, meta) {
-  const o = { n: p.name, p: p.price, t: dealTypes(p), i: rel(p.image, meta.img), u: rel(p.url, meta.url) };
+  const o = { n: p.name, p: p.price, t: dealTypes(p), g: productGroup(p), i: rel(p.image, meta.img), u: rel(p.url, meta.url) };
   if (p.brand) o.b = p.brand;
   if (p.category) o.c = p.category;
   if (p.quantity) o.q = p.quantity;

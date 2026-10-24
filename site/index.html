@@ -43,8 +43,9 @@ input{font:inherit;color:inherit;border:0;outline:0;background:none}
 .search input::placeholder{color:#A3A6AE}
 .lime-btn{width:40px;height:40px;flex:none;border-radius:50%;background:var(--lime);display:grid;place-items:center;font-size:20px;color:var(--ink)}
 .lime-btn.sm{width:36px;height:36px;font-size:17px}
-.sheet{display:none;gap:6px;flex-wrap:wrap;padding:10px 0 0}
-.sheet.open{display:flex}
+#sortBtn{position:relative}
+.fbadge[hidden]{display:none}
+.fbadge{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:var(--ink);color:#fff;font-size:.66rem;font-weight:700;display:grid;place-items:center;padding:0 4px}
 
 .chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;margin:0 -16px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
@@ -54,7 +55,8 @@ input{font:inherit;color:inherit;border:0;outline:0;background:none}
 .chip[aria-pressed=true] small{color:#3d5553}
 .chip select{appearance:none;-webkit-appearance:none;max-width:56vw}
 
-.count{color:var(--muted);font-size:.8rem;padding:0 2px 8px}
+.count{color:var(--muted);font-size:.8rem;padding:0 2px 8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.linkbtn{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:2px;font-size:.8rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .card{background:var(--surface);border-radius:28px;padding:10px;display:flex;flex-direction:column;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .15s}
 .card:hover{transform:translateY(-3px)}
@@ -99,7 +101,7 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 .store-btn{display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:22px;padding:12px 14px;box-shadow:var(--shadow);text-align:left;width:100%}
 .store-btn[aria-current=true]{background:var(--ink);color:#fff}
 .store-btn .ico{width:44px;height:44px;color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none}
-.store-btn .ico.all{background:var(--lime);border-radius:50%;box-shadow:none}
+.store-btn .ico.all{background:var(--lime);border-radius:50%;box-shadow:none;font-size:22px}
 .store-btn .ico img{width:100%;height:100%;object-fit:contain}
 .store-btn .ico[data-store=vkusvill] img{border-radius:12px} /* square app-icon logo */
 .store-btn .info{flex:1;min-width:0}
@@ -113,6 +115,49 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 .lang button{white-space:nowrap;padding:7px 12px;border-radius:999px;font-weight:600;font-size:.82rem;color:var(--muted)}
 .lang button[aria-pressed=true]{background:var(--mint);color:var(--ink)}
 .drawer small{color:var(--muted);font-size:.75rem;line-height:1.4}
+
+/* Filter panel: bottom sheet on phones, centred card on wide screens. */
+.fsheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--bg);border-radius:30px 30px 0 0;max-height:min(88vh,88dvh);display:none;flex-direction:column;box-shadow:0 -10px 40px rgba(0,0,0,.15)}
+body.filters .scrim{display:block;animation:fade .2s ease}
+body.filters .fsheet{display:flex;animation:up .25s ease}
+@keyframes up{from{transform:translateY(100%)}}
+@media (min-width:700px){
+  .fsheet{left:50%;right:auto;bottom:auto;top:50%;width:560px;max-height:84vh;border-radius:30px;transform:translate(-50%,-50%)}
+  body.filters .fsheet{animation:fade .2s ease}
+}
+.fs-head{display:flex;align-items:center;gap:10px;padding:16px 16px 6px}
+.fs-head b{font-family:Archivo,Inter,sans-serif;font-stretch:80%;font-weight:900;font-size:1.2rem;text-transform:uppercase}
+.fs-head .burger{margin-left:auto}
+.fs-body{overflow-y:auto;overscroll-behavior:contain;padding:4px 16px 8px;display:flex;flex-direction:column;gap:18px}
+.fs-sec h4{margin:0 0 10px;font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fs-sec h4 button{text-transform:none;letter-spacing:0;font-size:.78rem;color:var(--ink);font-weight:600}
+.fs-sub{margin:12px 0 8px;font-size:.8rem;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.fs-sub button{font-size:.78rem;font-weight:600;color:var(--muted)}
+.fs-chips{display:flex;flex-wrap:wrap;gap:6px}
+.fs-chips.line{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:2px 16px;scrollbar-width:none}
+.fs-chips.line::-webkit-scrollbar{display:none}
+.fs-chips .chip{padding:8px 12px}
+.fs-chips .chip i{font-size:16px}
+.fs-chips .chip[aria-pressed=true]{background:var(--ink);color:#fff}
+.fs-chips .chip[aria-pressed=true] small{color:#c9cbd1}
+.hist{display:flex;align-items:flex-end;gap:2px;height:36px;padding:0 13px}
+.hist span{flex:1;background:#E3E3DF;border-radius:3px 3px 0 0;min-height:2px}
+.hist span.on{background:var(--ink)}
+.range{position:relative;height:30px}
+.range .tr{position:absolute;left:13px;right:13px;top:50%;height:6px;margin-top:-3px;border-radius:3px;background:#E3E3DF}
+.range .fill{position:absolute;top:0;bottom:0;background:var(--ink);border-radius:3px}
+.range input{position:absolute;inset:0;width:100%;margin:0;height:30px;background:none;pointer-events:none;-webkit-appearance:none;appearance:none}
+.range input::-webkit-slider-runnable-track{background:none;border:0}
+.range input::-moz-range-track{background:none;border:0}
+.range input::-webkit-slider-thumb{pointer-events:auto;-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);cursor:grab}
+.range input::-moz-range-thumb{pointer-events:auto;width:20px;height:20px;border-radius:50%;background:var(--lime);border:3px solid var(--ink);cursor:grab}
+.pboxes{display:flex;gap:8px;margin-top:8px}
+.pbox{flex:1;display:flex;align-items:center;gap:6px;background:var(--surface);border-radius:999px;padding:9px 14px;box-shadow:var(--shadow);min-width:0}
+.pbox span{color:var(--muted);font-size:.78rem;flex:none}
+.pbox input{width:100%;min-width:0;font-weight:700;font-size:.95rem}
+.fs-foot{display:flex;gap:8px;padding:10px 16px calc(14px + env(safe-area-inset-bottom))}
+.btn-ghost{background:var(--surface);border-radius:999px;padding:13px 18px;font-weight:600;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+.btn-main{flex:1;background:var(--ink);color:#fff;border-radius:999px;padding:13px 18px;font-weight:700}
 
 @media (max-width:520px){
   .grid{grid-template-columns:1fr 1fr;gap:10px}
@@ -138,9 +183,8 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
   <label class="search">
     <i class="ph ph-magnifying-glass"></i>
     <input id="q" type="search" autocomplete="off">
-    <button class="lime-btn" type="button" id="sortBtn" aria-label="Сортировка"><i class="ph-bold ph-sliders-horizontal"></i></button>
+    <button class="lime-btn" type="button" id="sortBtn" aria-label="Фильтры"><i class="ph-bold ph-sliders-horizontal"></i><span class="fbadge" id="fbadge" hidden></span></button>
   </label>
-  <div class="sheet" id="sortsheet"></div>
 
   <nav class="chips" id="chips"></nav>
   <div class="count" id="count"></div>
@@ -162,13 +206,34 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
   <div class="store-list" id="storeList"></div>
 </aside>
 
+<section class="fsheet" id="fsheet" role="dialog" aria-modal="true">
+  <div class="fs-head"><b id="fsTitle"></b><button class="burger" type="button" id="fsClose" aria-label="×"><i class="ph-bold ph-x"></i></button></div>
+  <div class="fs-body">
+    <div class="fs-sec"><h4 id="fsSortT"></h4><div class="fs-chips line" id="fsSort"></div></div>
+    <div class="fs-sec" id="fsPriceSec">
+      <h4><span id="fsPriceT"></span></h4>
+      <div class="hist" id="fsHist"></div>
+      <div class="range"><div class="tr"><div class="fill" id="fsFill"></div></div><input type="range" id="fsLo" min="0" max="1000" step="1" aria-label="min"><input type="range" id="fsHi" min="0" max="1000" step="1" aria-label="max"></div>
+      <div class="pboxes"><label class="pbox"><span id="fsFromT"></span><input id="fsMin" inputmode="decimal" autocomplete="off"></label><label class="pbox"><span id="fsToT"></span><input id="fsMax" inputmode="decimal" autocomplete="off"></label></div>
+    </div>
+    <div class="fs-sec"><h4 id="fsDiscT"></h4><div class="fs-chips line" id="fsDisc"></div></div>
+    <div class="fs-sec"><h4 id="fsTypeT"></h4><div id="fsTypes"></div></div>
+  </div>
+  <div class="fs-foot"><button class="btn-ghost" type="button" id="fsReset"><i class="ph-bold ph-arrow-counter-clockwise"></i><span id="fsResetT"></span></button><button class="btn-main" type="button" id="fsShow"></button></div>
+</section>
+
 <script>
 const I18N = {
   ru: {
     search: 'Найти товар или бренд…', menu: 'Магазины', allStores: 'Все магазины', all: 'Все акции', category: 'Все категории',
     deals: (n) => `${n.toLocaleString('ru-RU')} ${plural(n, ['акция', 'акции', 'акций'])}`,
     more: 'Показать ещё', empty: 'Ничего не найдено', error: 'Не удалось загрузить данные. Попробуйте позже.',
-    sort: { none: 'Без фильтров', disc: 'Самая большая скидка', fresh: 'Сначала новые', asc: 'Сначала дешёвые', desc: 'Сначала дорогие', name: 'По названию' },
+    sort: { disc: 'Выгодные', asc: 'Дешевле', desc: 'Дороже', fresh: 'Новые', name: 'А–Я', none: 'Как в магазине' },
+    filters: 'Фильтры', sortT: 'Сортировка', price: 'Цена', from: 'от', to: 'до', discount: 'Скидка', anyDisc: 'Любая', discFrom: (n) => `от ${n}%`,
+    type: 'Тип товара', food: 'Продукты', nonfood: 'Товары', pickAll: 'Выбрать все', unpickAll: 'Снять', clear: 'Сбросить', resetFilters: 'Сбросить фильтры',
+    show: (n) => n ? `Показать ${n.toLocaleString('ru-RU')}` : 'Ничего не найдено',
+    groups: { dairy: 'Молочное и яйца', meat: 'Мясо и рыба', produce: 'Овощи и фрукты', bakery: 'Хлеб и выпечка', staples: 'Бакалея', snacks: 'Сладости и снеки', drinks: 'Напитки', frozen: 'Заморозка', ready: 'Готовая еда',
+      beauty: 'Красота и здоровье', cleaning: 'Бытовая химия', baby: 'Детям', home: 'Дом и кухня', tech: 'Техника', clothes: 'Одежда', hobby: 'Хобби, спорт, игрушки', pets: 'Животным', other: 'Другое' },
     types: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк Win', clearance: 'Распродажа', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Другие акции' },
     allTypes: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк', clearance: 'Распродажа', catalog: 'Каталог акций', goodprice: 'Выгодная цена', promo: 'Другие акции' },
     bimIndirim: 'Скидки İndirim', onSale: 'Уже в продаже', soon: 'Скоро', fresh: 'Новые', ekstra: 'Ekstra (техника, одежда)',
@@ -188,7 +253,12 @@ const I18N = {
     search: 'Ürün veya marka ara…', menu: 'Marketler', allStores: 'Tüm marketler', all: 'Tüm fırsatlar', category: 'Tüm kategoriler',
     deals: (n) => `${n.toLocaleString('tr-TR')} fırsat`,
     more: 'Daha fazla göster', empty: 'Sonuç bulunamadı', error: 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.',
-    sort: { none: 'Filtresiz', disc: 'En çok indirim', fresh: 'Önce yeniler', asc: 'Önce ucuz', desc: 'Önce pahalı', name: 'Ada göre' },
+    sort: { disc: 'En avantajlı', asc: 'Önce ucuz', desc: 'Önce pahalı', fresh: 'Yeni', name: 'A–Z', none: 'Market sırası' },
+    filters: 'Filtreler', sortT: 'Sıralama', price: 'Fiyat', from: 'en az', to: 'en çok', discount: 'İndirim', anyDisc: 'Hepsi', discFrom: (n) => `%${n} ve üzeri`,
+    type: 'Ürün türü', food: 'Gıda', nonfood: 'Gıda dışı', pickAll: 'Tümünü seç', unpickAll: 'Kaldır', clear: 'Temizle', resetFilters: 'Filtreleri temizle',
+    show: (n) => n ? `${n.toLocaleString('tr-TR')} ürünü göster` : 'Sonuç yok',
+    groups: { dairy: 'Süt, kahvaltılık', meat: 'Et, tavuk, balık', produce: 'Meyve, sebze', bakery: 'Ekmek, pastane', staples: 'Temel gıda', snacks: 'Atıştırmalık, tatlı', drinks: 'İçecek', frozen: 'Dondurulmuş', ready: 'Hazır yemek',
+      beauty: 'Kozmetik, sağlık', cleaning: 'Temizlik', baby: 'Anne-bebek', home: 'Ev, mutfak', tech: 'Elektronik', clothes: 'Giyim', hobby: 'Hobi, spor, oyuncak', pets: 'Evcil hayvan', other: 'Diğer' },
     types: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Win Para', clearance: 'Stok eritme', catalog: 'Migroskop', goodprice: 'İyi Fiyat', promo: 'Diğer kampanyalar' },
     allTypes: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Para iade', clearance: 'Stok eritme', catalog: 'Kampanya kataloğu', goodprice: 'İyi fiyat', promo: 'Diğer kampanyalar' },
     bimIndirim: 'İndirim', onSale: 'Satışta', soon: 'Yakında', fresh: 'Yeni', ekstra: 'Ekstra',
@@ -221,7 +291,15 @@ const store = { get(k) { try { return localStorage.getItem(k); } catch { return 
 let country = store.get('country') || ((navigator.language || '').startsWith('ru') ? 'ru' : 'tr');
 const LANG_OF = { tr: 'tr', ru: 'ru' };
 let lang = LANG_OF[country];
-const state = { store: store.get('store') || 'all', chip: 'all', category: '', sort: 'disc', shown: PAGE };
+const SORTS = ['disc', 'asc', 'desc', 'fresh', 'name', 'none'];
+const state = { store: store.get('store') || 'all', chip: 'all', sort: SORTS.includes(store.get('sort')) ? store.get('sort') : 'disc', shown: PAGE,
+  pmin: null, pmax: null, minDisc: 0, groups: new Set() }; // panel filters; null price = no bound
+// Product types (src/groups.js): food first, then everything else.
+const GROUP_ICON = { dairy: 'cheese', meat: 'cow', produce: 'carrot', bakery: 'bread', staples: 'grains', snacks: 'cookie', drinks: 'coffee', frozen: 'snowflake', ready: 'bowl-food',
+  beauty: 'sparkle', cleaning: 'spray-bottle', baby: 'baby', home: 'house-line', tech: 'television-simple', clothes: 't-shirt', hobby: 'puzzle-piece', pets: 'paw-print', other: 'dots-three-circle' };
+const FOOD = ['dairy', 'meat', 'produce', 'bakery', 'staples', 'snacks', 'drinks', 'frozen', 'ready'];
+const NONFOOD = Object.keys(GROUP_ICON).filter((g) => !FOOD.includes(g));
+const DISCS = [0, 10, 25, 50];
 let DATA = null, STORES = {}, current = [];
 const LOADED = {}; // store id -> its deals, loaded on demand
 const T = () => I18N[lang];
@@ -272,16 +350,10 @@ function renderStatic() {
   $('menuTitle').textContent = T().menu;
   $('storeTitle').textContent = STORES[state.store] ? '· ' + STORES[state.store].name : '';
   document.querySelectorAll('.lang button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.country === country));
-  $('sortsheet').replaceChildren(...Object.entries(T().sort).map(([k, label]) => {
-    const b = el('button', 'chip', label); b.type = 'button'; b.setAttribute('aria-pressed', k === state.sort);
-    b.onclick = () => {
-      state.sort = k;
-      // "No filters": also drop the chip and the search, show everything as the store lists it.
-      if (k === 'none') { state.chip = 'all'; $('q').value = ''; state.shown = PAGE; renderChips(); }
-      renderStatic(); render();
-    };
-    return b;
-  }));
+  const t = T();
+  $('fsTitle').textContent = t.filters; $('fsSortT').textContent = t.sortT; $('fsPriceT').textContent = t.price;
+  $('fsFromT').textContent = t.from; $('fsToT').textContent = t.to; $('fsDiscT').textContent = t.discount;
+  $('fsTypeT').textContent = t.type; $('fsResetT').textContent = t.clear;
   if (DATA) renderMenu();
 }
 
@@ -322,13 +394,14 @@ function chip(label, n, pressed, onclick) {
 }
 
 function renderChips() {
-  const scope = DATA.products.filter(inStore);
   const defs = chipDefs();
   if (!defs.some((d) => d[0] === state.chip)) state.chip = 'all';
+  const scope = DATA.products.filter(passes('chip')); // counts follow search and panel filters
   const tabs = [];
   for (const [key, label, f] of defs) {
     const n = scope.filter(f).length;
-    if (n || key === 'all') tabs.push(chip(label, n, state.chip === key, () => { state.chip = key; state.shown = PAGE; renderChips(); render(); }));
+    // A chip that keeps every deal would just repeat "all".
+    if (key === 'all' || key === state.chip || (n && n < scope.length)) tabs.push(chip(label, n, state.chip === key, () => { state.chip = key; state.shown = PAGE; render(); }));
   }
   $('chips').replaceChildren(...tabs);
 }
@@ -376,24 +449,138 @@ function card(p) {
   return a;
 }
 
-function render() {
+// Every filter as a predicate; facets skip their own one, so each option in the
+// panel shows how many deals it would leave given all the other choices.
+function passes(skip) {
   const words = fold($('q').value.trim()).split(/\s+/).filter(Boolean);
-  const f = chipFilter();
+  const f = skip === 'chip' ? () => true : chipFilter();
+  const { pmin, pmax, minDisc, groups } = state;
+  return (p) => inStore(p) && f(p) && (!words.length || words.every((w) => p._f.includes(w)))
+    && (skip === 'price' || ((pmin == null || p.p >= pmin) && (pmax == null || p.p <= pmax)))
+    && (skip === 'disc' || !minDisc || (p.d || 0) >= minDisc)
+    && (skip === 'groups' || !groups.size || groups.has(p.g || 'other'));
+}
+const activeFilters = () => (state.pmin != null || state.pmax != null) + !!state.minDisc + !!state.groups.size;
+
+function render() {
+  renderChips();
   const sorters = {
     none: () => 0,
     disc: (a, b) => (b.d || 0) - (a.d || 0) || b.t.length - a.t.length || a.p - b.p,
     fresh: (a, b) => (b.fs || '').localeCompare(a.fs || '') || (b.d || 0) - (a.d || 0),
     asc: (a, b) => a.p - b.p, desc: (a, b) => b.p - a.p,
-    name: (a, b) => a.n.localeCompare(b.n, 'tr'),
+    name: (a, b) => a.n.localeCompare(b.n, T().locale),
   };
-  current = DATA.products.filter((p) => inStore(p) && f(p) && (!words.length || words.every((w) => p._f.includes(w)))).sort(sorters[state.sort]);
-  $('count').textContent = T().deals(current.length);
+  current = DATA.products.filter(passes()).sort(sorters[state.sort]);
+  const n = activeFilters();
+  $('fbadge').hidden = !n; $('fbadge').textContent = n;
+  $('count').replaceChildren(T().deals(current.length));
+  if (n) { const r = el('button', 'linkbtn', T().resetFilters); r.type = 'button'; r.onclick = () => { resetFilters(); render(); }; $('count').append('·', r); }
+  if (document.body.classList.contains('filters')) renderPanel();
   if (!current.length) {
     const e = el('div', 'empty'); e.append(icon('smiley-sad'), document.createTextNode(T().empty));
     $('grid').replaceChildren(e); $('more').hidden = true; return;
   }
   $('grid').replaceChildren(...current.slice(0, state.shown).map(card));
   $('more').hidden = current.length <= state.shown;
+}
+
+function resetFilters() { state.pmin = state.pmax = null; state.minDisc = 0; state.groups.clear(); state.shown = PAGE; }
+const applyFilters = () => { state.shown = PAGE; render(); };
+
+// Price slider on a log scale between the cheapest and dearest deal in view,
+// with a histogram of the deals over the same scale.
+let PR = { lo: 0, hi: 1, cur: 'TRY' };
+const toPrice = (v) => PR.lo * Math.pow(PR.hi / PR.lo, v / 1000);
+const toPos = (price) => Math.round(1000 * Math.log(price / PR.lo) / Math.log(PR.hi / PR.lo));
+const niceNum = (n, up) => { const step = n < 20 ? 0.5 : n < 200 ? 1 : n < 2000 ? 10 : n < 20000 ? 100 : 1000; return (up ? Math.ceil : Math.floor)(n / step) * step; };
+const curOf = () => (STORES[state.store] || countryStores()[0] || {}).currency || 'TRY';
+
+function renderPanel() {
+  const t = T();
+  const chipBtn = (label, ic, n, pressed, onclick) => {
+    const b = el('button', 'chip'); b.type = 'button'; b.setAttribute('aria-pressed', pressed);
+    if (ic) b.append(icon(ic, 'ph-bold'));
+    b.append(label);
+    if (n != null) b.append(el('small', '', n.toLocaleString(t.locale)));
+    b.onclick = onclick; return b;
+  };
+  // Sorting
+  $('fsSort').replaceChildren(...SORTS.map((k) => chipBtn(t.sort[k], null, null, state.sort === k, () => { state.sort = k; store.set('sort', k); applyFilters(); })));
+  // Discount: counts with every other filter applied
+  const forDisc = DATA.products.filter(passes('disc'));
+  $('fsDisc').replaceChildren(...DISCS.map((d) => {
+    const n = d ? forDisc.filter((p) => (p.d || 0) >= d).length : forDisc.length;
+    return d && !n && state.minDisc !== d ? null : chipBtn(d ? t.discFrom(d) : t.anyDisc, d ? 'percent' : null, n, state.minDisc === d, () => { state.minDisc = d; applyFilters(); });
+  }).filter(Boolean));
+  // Product types, food and non-food
+  const forGroups = DATA.products.filter(passes('groups'));
+  const counts = {}; for (const p of forGroups) counts[p.g || 'other'] = (counts[p.g || 'other'] || 0) + 1;
+  const block = (title, keys) => {
+    const shown = keys.filter((g) => counts[g] || state.groups.has(g));
+    if (!shown.length) return [];
+    const all = shown.every((g) => state.groups.has(g));
+    const head = el('div', 'fs-sub'); head.append(el('span', '', title));
+    const tog = el('button', '', all ? t.unpickAll : t.pickAll); tog.type = 'button';
+    tog.onclick = () => { for (const g of shown) all ? state.groups.delete(g) : state.groups.add(g); applyFilters(); };
+    head.append(tog);
+    const box = el('div', 'fs-chips');
+    box.append(...shown.map((g) => chipBtn(t.groups[g], GROUP_ICON[g], counts[g] || 0, state.groups.has(g), () => {
+      state.groups.has(g) ? state.groups.delete(g) : state.groups.add(g); applyFilters();
+    })));
+    return [head, box];
+  };
+  $('fsTypes').replaceChildren(...block(t.food, FOOD), ...block(t.nonfood, NONFOOD));
+  if ($('fsTypes').firstChild) $('fsTypes').firstChild.style.marginTop = '0';
+  renderPrice(DATA.products.filter(passes('price')));
+  $('fsShow').textContent = t.show(current.length);
+  $('fsShow').disabled = !current.length;
+}
+
+function renderPrice(list) {
+  const prices = list.map((p) => p.p).filter((x) => x > 0);
+  $('fsPriceSec').hidden = prices.length < 2;
+  if (prices.length < 2) return;
+  const lo = Math.max(0.5, niceNum(Math.min(...prices), false)), hi = niceNum(Math.max(...prices), true);
+  PR = { lo, hi: Math.max(hi, lo * 1.01), cur: curOf() };
+  const a = state.pmin == null ? 0 : Math.max(0, Math.min(1000, toPos(state.pmin)));
+  const b = state.pmax == null ? 1000 : Math.max(0, Math.min(1000, toPos(state.pmax)));
+  if (document.activeElement !== $('fsLo')) $('fsLo').value = a;
+  if (document.activeElement !== $('fsHi')) $('fsHi').value = b;
+  const BINS = 32, bins = new Array(BINS).fill(0);
+  for (const x of prices) bins[Math.min(BINS - 1, Math.max(0, Math.floor(toPos(x) / 1000 * BINS)))]++;
+  const max = Math.max(...bins);
+  $('fsHist').replaceChildren(...bins.map((n, i) => {
+    const bar = el('span', ((i + 0.5) / BINS * 1000 >= a && (i + 0.5) / BINS * 1000 <= b) ? 'on' : '');
+    bar.style.height = (n ? 8 + 92 * Math.sqrt(n / max) : 0) + '%'; return bar;
+  }));
+  paintRange();
+}
+function paintRange() {
+  const a = +$('fsLo').value, b = +$('fsHi').value;
+  $('fsFill').style.left = a / 10 + '%'; $('fsFill').style.right = (100 - b / 10) + '%';
+  const fmtP = (n) => new Intl.NumberFormat((CUR[PR.cur] || CUR.TRY)[0], { maximumFractionDigits: 2 }).format(n);
+  if (document.activeElement !== $('fsMin')) $('fsMin').value = fmtP(state.pmin ?? PR.lo);
+  if (document.activeElement !== $('fsMax')) $('fsMax').value = fmtP(state.pmax ?? PR.hi);
+  $('fsMin').placeholder = fmtP(PR.lo); $('fsMax').placeholder = fmtP(PR.hi);
+}
+let slideTimer;
+function onSlide(e) {
+  let a = +$('fsLo').value, b = +$('fsHi').value;
+  if (a > b) { if (e.target.id === 'fsLo') $('fsLo').value = a = b; else $('fsHi').value = b = a; }
+  state.pmin = a <= 0 ? null : niceNum(toPrice(a), false);
+  state.pmax = b >= 1000 ? null : niceNum(toPrice(b), true);
+  paintRange();
+  clearTimeout(slideTimer); slideTimer = setTimeout(applyFilters, 120);
+}
+function onPriceInput() {
+  const num = (v) => { const n = parseFloat(String(v).replace(/\s/g, '').replace(/\.(?=\d{3}(\D|$))/g, '').replace(',', '.')); return Number.isFinite(n) ? n : null; };
+  let lo = num($('fsMin').value), hi = num($('fsMax').value);
+  if (lo != null && hi != null && lo > hi) [lo, hi] = [hi, lo];
+  state.pmin = lo == null || lo <= PR.lo ? null : lo;
+  state.pmax = hi == null || hi >= PR.hi ? null : hi;
+  $('fsMin').blur(); $('fsMax').blur();
+  applyFilters();
 }
 
 function showMore() {
@@ -404,7 +591,7 @@ function showMore() {
 
 function setStore(id) {
   state.store = id !== 'all' && STORES[id] && (STORES[id].country || 'tr') === country ? id : 'all'; store.set('store', state.store);
-  state.chip = 'all'; state.category = ''; state.shown = PAGE;
+  state.chip = 'all'; state.shown = PAGE;
   renderStatic(); window.scrollTo({ top: 0 });
   show();
 }
@@ -431,23 +618,34 @@ function show() {
   if (ids.some((id) => !Array.isArray(LOADED[id]))) { $('count').textContent = ''; $('grid').replaceChildren(); $('chips').replaceChildren(); $('more').hidden = true; }
   Promise.all(ids.map(load)).then(() => {
     if (token !== showToken) return; // user switched store meanwhile
-    renderMenu(); renderChips(); render();
+    renderMenu(); render();
   }).catch(showError);
   // Warm the other stores in the background so switching is instant.
   if (state.store !== 'all') setTimeout(() => countryStores().forEach((x) => load(x.id)?.catch?.(() => {})), 1500);
 }
 function showError() { const e = el('div', 'empty'); e.append(icon('wifi-slash'), document.createTextNode(T().error)); $('grid').replaceChildren(e); }
 const openMenu = () => document.body.classList.add('menu');
-const closeMenu = () => document.body.classList.remove('menu');
+const closeMenu = () => document.body.classList.remove('menu', 'filters');
 
 document.querySelectorAll('.lang button').forEach((b) => b.onclick = () => {
   if (b.dataset.country === country) return;
   country = b.dataset.country; lang = LANG_OF[country]; store.set('country', country);
+  state.pmin = state.pmax = null; // other currency
   setStore('all');
 });
 $('menuBtn').onclick = openMenu; $('closeBtn').onclick = closeMenu; $('scrim').onclick = closeMenu;
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
-$('sortBtn').onclick = (e) => { e.preventDefault(); $('sortsheet').classList.toggle('open'); };
+$('sortBtn').onclick = (e) => {
+  e.preventDefault(); if (!DATA) return;
+  document.body.classList.add('filters'); renderPanel();
+  // One-line rows open at the start, with the chosen chip in view.
+  for (const row of document.querySelectorAll('.fs-chips.line')) { row.scrollLeft = 0; row.querySelector('[aria-pressed=true]')?.scrollIntoView({ inline: 'nearest', block: 'nearest' }); }
+};
+const closePanel = () => document.body.classList.remove('filters');
+$('fsClose').onclick = closePanel; $('fsShow').onclick = () => { closePanel(); window.scrollTo({ top: 0 }); };
+$('fsReset').onclick = () => { resetFilters(); state.sort = 'disc'; store.set('sort', 'disc'); render(); };
+for (const id of ['fsLo', 'fsHi']) $(id).addEventListener('input', onSlide);
+for (const id of ['fsMin', 'fsMax']) $(id).addEventListener('change', onPriceInput);
 $('more').onclick = showMore;
 let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(() => { if (DATA && DATA.products.length) { state.shown = PAGE; render(); } }, 150); });
 new IntersectionObserver((es) => { if (es[0].isIntersecting && !$('more').hidden) showMore(); }, { rootMargin: '600px' }).observe($('more'));
