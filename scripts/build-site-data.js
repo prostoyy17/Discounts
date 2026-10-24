@@ -21,8 +21,10 @@ const META = {
   sok: { name: 'ŞOK', country: 'tr', currency: 'TRY', every: 24, logo: 'https://images.ceptesok.com/logos/service-types/market-logo.svg', img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
   migros: { name: 'Migros', country: 'tr', currency: 'TRY', every: 48, logo: 'https://www.migros.com.tr/assets/images/seo/new/apple-touch-icon-152x152.png', img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
   vkusvill: { name: 'ВкусВилл', country: 'ru', currency: 'RUB', region: 'Москва', every: 24, logo: 'https://vkusvill.ru/apple-touch-icon.png?v=1', img: 'https://img.vkusvill.ru/pim/images/site/', url: 'https://vkusvill.ru/' },
-  // Prices of the store magnit.ru picks for visitors without an address (Краснодар).
-  magnit: { name: 'Магнит', country: 'ru', currency: 'RUB', region: 'Краснодар', every: 48, logo: 'https://magnit.ru/apple-touch-icon-180x180.png', img: 'https://images-foodtech.magnit.ru/', url: 'https://magnit.ru/' },
+  // Only deals that are identical in several stores of the format across Russia
+  // (scripts/crawl-magnit.js), so they hold in any store of that format.
+  magnit: { name: 'Магнит у дома', country: 'ru', currency: 'RUB', region: 'вся Россия', every: 6, logo: 'https://magnit.ru/apple-touch-icon-180x180.png', img: 'https://images-foodtech.magnit.ru/', url: 'https://magnit.ru/' },
+  magnitgm: { name: 'Магнит Семейный / Экстра', country: 'ru', currency: 'RUB', region: 'вся Россия', every: 6, logo: 'https://magnit.ru/apple-touch-icon-180x180.png', img: 'https://images-foodtech.magnit.ru/', url: 'https://magnit.ru/' },
 };
 
 // Same promo rules as the current parsers, so data published by an older

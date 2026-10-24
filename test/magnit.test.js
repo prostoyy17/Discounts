@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { parseListing, parseDetail, pageUrl } from '../src/sources/magnit.js';
+import { parseListing, parseDetail, pageUrl, parsePromoPage, parsePromoDetail } from '../src/sources/magnit.js';
 import { productProblems } from '../src/validate.js';
 import { dealTypes } from '../src/deals.js';
 import { productGroup } from '../src/groups.js';
@@ -49,4 +49,34 @@ test('product page matches the catalogue card (prices in kopecks)', () => {
 test('broken page shape is an error, not an empty list', () => {
   assert.throws(() => parseListing('<html></html>'));
   assert.throws(() => parseListing('<script id="__NUXT_DATA__" type="application/json">[{"data":1},{}]</script>'));
+});
+
+test('catalogue badges: bonus points are a cashback deal, "Финальная цена" is not a deal', () => {
+  const r = parseListing(fx('catalog-fish-p1.html'));
+  const salat = r.products.find((p) => p.name.startsWith('Салат Северная гавань/Магнит Крабовый'));
+  assert.equal(salat.oldPrice, null);
+  assert.deepEqual(salat.promotions, ['+7 бонусов на карту Магнит Плюс']);
+  assert.deepEqual(dealTypes(salat), ['cashback']);
+  const krab = r.products.find((p) => p.name === 'Крабовые палочки Русское Море 400г'); // badge "Финальная цена"
+  assert.deepEqual(krab.promotions, []);
+  assert.deepEqual(dealTypes(krab), ['discount']);
+  assert.deepEqual(dealTypes({ price: 269.99, oldPrice: 499.99, promotions: ['−25% при покупке от 2 шт'] }), ['discount', 'multi']);
+});
+
+test('leaflet: only priced "Скидка" items, card condition, dates, catalogue id from the image', () => {
+  const r = parsePromoPage(fx('promo-catalog-p1.html'));
+  assert.deepEqual([r.total, r.pageSize, r.cards], [306, 33, 33]);
+  assert.ok(r.items.every((x) => x.price > 0));
+  const milka = r.items.find((x) => x.id === 'magnit-p2187857');
+  assert.deepEqual([milka.price, milka.oldPrice, milka.discountPercent, milka.priceCondition], [129.99, 184.99, 30, 'loyalty']);
+  assert.deepEqual([milka.validFrom, milka.validTo, milka.productId], ['2026-09-16', '2026-11-03', '1000444146']);
+  assert.equal(milka.url, 'https://magnit.ru/promo-product/2187857-morozhenoe-eskimo-milka-slivochnoe-lesnye-iagody-64-g');
+  assert.deepEqual(productProblems(milka), []);
+  // "Акция" items (prize games, charity) have no price and are not deals
+  assert.ok(!r.items.some((x) => x.name === 'Пончиковый понедельник'));
+});
+
+test('leaflet product page (prices in kopecks)', () => {
+  assert.deepEqual(parsePromoDetail(fx('promo-product-milka.html')),
+    { id: 'magnit-p2187857', name: 'Мороженое эскимо Milka сливочное лесные ягоды, 64 г', price: 129.99, oldPrice: 184.99, category: 'Полуфабрикаты', validTo: '2026-11-03' });
 });

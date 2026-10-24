@@ -7,8 +7,10 @@ export const USER_AGENT =
 const lastRequestAt = new Map();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export async function politeFetch(url, { delayMs = 2000, retries = 3, timeoutMs = 30000, method = 'GET' } = {}) {
-  const host = new URL(url).host;
+// `lane` lets a few crawls of one site run side by side, each keeping its own
+// pause (e.g. one lane per Магнит store); `headers` adds request headers.
+export async function politeFetch(url, { delayMs = 2000, retries = 3, timeoutMs = 30000, method = 'GET', headers = {}, lane = '' } = {}) {
+  const host = new URL(url).host + (lane ? `#${lane}` : '');
   for (let attempt = 0; ; attempt++) {
     const wait = (lastRequestAt.get(host) ?? 0) + delayMs - Date.now();
     if (wait > 0) await sleep(wait);
@@ -16,7 +18,7 @@ export async function politeFetch(url, { delayMs = 2000, retries = 3, timeoutMs 
     try {
       const res = await fetch(url, {
         method,
-        headers: { 'User-Agent': USER_AGENT, 'Accept-Language': 'tr-TR,tr;q=0.9' },
+        headers: { 'User-Agent': USER_AGENT, 'Accept-Language': 'tr-TR,tr;q=0.9', ...headers },
         signal: AbortSignal.timeout(timeoutMs),
         redirect: 'follow',
       });

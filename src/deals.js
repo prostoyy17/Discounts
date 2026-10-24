@@ -20,7 +20,7 @@ export const DEAL_TYPES = ['discount', 'card', 'multi', 'basket', 'cashback', 'c
 const RULES = [
   ['multi', /\d+\s*al\s*\d+\s*öde|\d\.?\s*si\s*%\s*\d+|alana\s+\d+\s+bedava|ikincisi\s*%|\d+\s*öde\s*\d+'?\S*\s+iade|при покупке от/],
   ['basket', /sepette|üzeri\s+alışverişte|tl\s+üzeri/i],
-  ['cashback', /win\s*para/i],
+  ['cashback', /win\s*para|бонус/i],
   ['clearance', /stokları\s+bitiriyoruz|kapış\s+kapış|исчезающий вид/],
   ['catalog', /^migroskop$/i],
   ['goodprice', /^iyi\s+fiyat$/i],

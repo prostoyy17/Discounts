@@ -21,7 +21,8 @@ const STORES = [
   { id: 'sok', crawl: 'scripts/crawl-sok.js', verify: 'scripts/verify-sok.js' },
   { id: 'migros', crawl: 'scripts/crawl-migros.js', verify: 'scripts/verify-migros.js' },
   { id: 'vkusvill', crawl: 'scripts/crawl-vkusvill.js', verify: 'scripts/verify-vkusvill.js' },
-  { id: 'magnit', crawl: 'scripts/crawl-magnit.js', verify: 'scripts/verify-magnit.js' },
+  { id: 'magnit', crawl: 'scripts/crawl-magnit.js', verify: 'scripts/verify-magnit.js', args: ['--format', 'magnit'] },
+  { id: 'magnitgm', crawl: 'scripts/crawl-magnit.js', verify: 'scripts/verify-magnit.js', args: ['--format', 'magnitgm'] },
 ];
 
 const args = process.argv;
@@ -59,9 +60,9 @@ for (const store of STORES) {
   let ok = offline;
   let error = null;
   if (!offline) {
-    ok = run(store.crawl);
+    ok = run(store.crawl, store.args ?? []);
     if (!ok) error = 'tarama reddedildi';
-    else if (verify && !run(store.verify, ['--sample', '12'])) { ok = false; error = 'doğrulama başarısız'; }
+    else if (verify && !run(store.verify, [...(store.args ?? []), '--sample', '12'])) { ok = false; error = 'doğrulama başarısız'; }
   }
   crawled.add(store.id);
   if (ok) {

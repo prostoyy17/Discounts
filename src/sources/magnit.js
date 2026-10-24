@@ -25,6 +25,19 @@ const num = (s) => {
   return Number.isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : null;
 };
 
+// Badges that are deals: "-25% от 2 шт" (multi-buy). cashback: bonus points
+// ("25 бонусов") on the Магнит Плюс card. Other badges ("Финальная цена",
+// "+5% с Премиум", "Только у нас", "+1 шанс на приз") are not price deals.
+function catalogPromos(x) {
+  const out = [];
+  for (const b of x.badges ?? []) {
+    const m = String(b.text ?? '').match(/^-\s*(\d+)\s*%\s*от\s*(\d+)\s*шт/);
+    if (m) out.push(`−${m[1]}% при покупке от ${m[2]} шт`);
+  }
+  if (x.cashback > 0) out.push(`+${x.cashback} бонусов на карту Магнит Плюс`);
+  return out;
+}
+
 /** One catalogue page -> { total, pageSize, page, category, cards, products }. */
 export function parseListing(html) {
   const g = dataEntry(nuxtData(html), 'goods-search');
@@ -52,7 +65,7 @@ export function parseListing(html) {
       currency: 'RUB',
       inStock: (x.quantity ?? 0) > 0,
       adult: !!x.adult,
-      promotions: [],
+      promotions: catalogPromos(x),
       image: x.image || null,
       url: x.link ? new URL(x.link.split('?')[0], BASE).href : null,
       validFrom: null,
@@ -77,4 +90,57 @@ export function parseDetail(html) {
     inStock: !d.isMissing && (d.quantity ?? 0) > 0,
     weighted: !!d.weighted?.isWeighted,
   };
+}
+
+/**
+ * One promo-catalog page (the store's leaflet) -> { total, pageSize, page,
+ * cards, items }. Only "Скидка" items with a price are deals we can show;
+ * "Акция" (prize games, charity, bonuses without a price), category discounts
+ * and collections are left out and counted.
+ */
+export function parsePromoPage(html) {
+  const g = dataEntry(nuxtData(html), 'promotions');
+  if (!g || !Array.isArray(g.goods) || !g.pagination) throw new Error('promotions bulunamadı');
+  const items = [];
+  for (const x of g.goods) {
+    const price = num(x.price), old = num(x.oldPrice);
+    if (String(x.promoType) !== '1' || price == null) continue;
+    const discounted = old != null && old > price;
+    const productId = (String(x.image ?? '').match(/\/images\/(\d{7,})/) ?? [])[1] ?? null;
+    items.push({
+      store: 'magnit',
+      id: `magnit-p${x.id}`,
+      sourceId: String(x.id),
+      productId, // catalogue product id taken from the leaflet image name, when there is one
+      section: discounted ? 'indirim' : 'katalog',
+      category: null,
+      brand: null,
+      name: clean(x.title),
+      quantity: null,
+      unit: null,
+      price,
+      oldPrice: discounted ? old : null,
+      discountPercent: discounted ? Number(String(x.salePercent ?? '').replace(/[^\d]/g, '')) || Math.round((1 - price / old) * 100) : null,
+      // In the store, at the till, with the Магнит Плюс card.
+      priceCondition: /карт\S* Магнит Плюс/i.test(x.description ?? '') ? 'loyalty' : null,
+      currency: 'RUB',
+      inStock: true,
+      adult: !!x.adult,
+      promotions: discounted ? [] : ['Спеццена в магазине'],
+      image: x.image || null,
+      url: x.link ? new URL(x.link.split('?')[0], BASE).href : null,
+      validFrom: x.startDate || null,
+      validTo: x.endDate || null,
+    });
+  }
+  return { total: g.pagination.total, pageSize: g.pagination.pageSize, page: g.pagination.page, cards: g.goods.length, items };
+}
+
+/** Promo page /promo-product/<id>-<slug> -> { id, name, price, oldPrice, category, validTo } (prices in kopecks there). */
+export function parsePromoDetail(html) {
+  const x = Object.entries(nuxtData(html)?.data ?? {}).find(([k]) => k.startsWith('promotions-item'))?.[1]?.promo;
+  if (!x) throw new Error('promotions-item bulunamadı');
+  const kop = (v) => (typeof v === 'number' && v > 0 ? Math.round(v) / 100 : null);
+  const price = kop(x.price), old = kop(x.oldPrice);
+  return { id: `magnit-p${x.id}`, name: clean(x.name), price, oldPrice: old != null && price != null && old > price ? old : null, category: x.categoryName || null, validTo: x.endDate || null };
 }

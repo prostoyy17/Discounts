@@ -16,11 +16,15 @@ on:
     - cron: '17 3 * * *'
     - cron: '27 4 */2 * *'
     - cron: '37 5 * * *'
+    # Магнит у дома / Семейный-Экстра: every 6 h (5 and 4 stores side by side) —
+    # switched on once the first full crawl is verified:
+    # - cron: '47 */6 * * *'
+    # - cron: '53 1-23/6 * * *'
   workflow_dispatch:
     inputs:
       stores:
         description: 'Stores to crawl (comma separated)'
-        default: 'bim,sok,migros,vkusvill'
+        default: 'bim,sok,migros,vkusvill,magnit,magnitgm'
 permissions:
   contents: read
   pages: write
@@ -53,7 +57,9 @@ jobs:
             '17 3 * * *')   echo "stores=sok" >> "$GITHUB_OUTPUT" ;;
             '27 4 */2 * *') echo "stores=migros" >> "$GITHUB_OUTPUT" ;;
             '37 5 * * *')   echo "stores=vkusvill" >> "$GITHUB_OUTPUT" ;;
-            *)              echo "stores=${{ inputs.stores || 'bim,sok,migros,vkusvill' }}" >> "$GITHUB_OUTPUT" ;;
+            '47 */6 * * *') echo "stores=magnit" >> "$GITHUB_OUTPUT" ;;
+            '53 1-23/6 * * *') echo "stores=magnitgm" >> "$GITHUB_OUTPUT" ;;
+            *)              echo "stores=${{ inputs.stores || 'bim,sok,migros,vkusvill,magnit,magnitgm' }}" >> "$GITHUB_OUTPUT" ;;
           esac
       - name: Crawl, verify and build data
         # Crawls the picked stores; the others keep their live data. A store
@@ -66,7 +72,7 @@ jobs:
         if: github.event_name == 'push'
         run: node scripts/update-all.js --reuse-published --only "${STORES}"
         env:
-          STORES: bim,sok,migros,vkusvill
+          STORES: bim,sok,migros,vkusvill,magnit,magnitgm
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

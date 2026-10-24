@@ -104,7 +104,7 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 .store-btn .ico{width:44px;height:44px;color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none}
 .store-btn .ico.all{background:var(--lime);border-radius:50%;box-shadow:none;font-size:22px}
 .store-btn .ico img{width:100%;height:100%;object-fit:contain}
-.store-btn .ico[data-store=vkusvill] img,.store-btn .ico[data-store=magnit] img{border-radius:12px} /* square app-icon logos */
+.store-btn .ico[data-store=vkusvill] img,.store-btn .ico[data-store^=magnit] img{border-radius:12px} /* square app-icon logos */
 .store-btn .info{flex:1;min-width:0}
 .store-btn .nm{font-weight:700}
 .store-btn .sub{font-size:.74rem;display:flex;align-items:center;gap:6px;color:var(--muted)}
@@ -240,7 +240,8 @@ const I18N = {
     allTypes: { discount: 'Скидки %', card: 'С картой Money', multi: '2 по цене 1 и т.п.', basket: 'Цена в корзине', cashback: 'Кэшбэк', clearance: 'Распродажа', catalog: 'Каталог акций', goodprice: 'Выгодная цена', promo: 'Другие акции' },
     bimIndirim: 'Скидки İndirim', onSale: 'Уже в продаже', soon: 'Скоро', fresh: 'Новые', ekstra: 'Ekstra (техника, одежда)',
     money: 'С картой Money', loyalty: 'По карте лояльности', online: 'Только онлайн', newBadge: 'НОВОЕ',
-    vv: { card: 'По карте', multi: 'При покупке от 2 шт', clearance: 'Исчезающий вид', online: 'Только онлайн' },
+    vv: { card: 'По карте', multi: 'При покупке от 2 шт', clearance: 'Исчезающий вид', online: 'Только онлайн', cashback: 'Бонусы на карту' },
+    magnitCard: 'В магазине по карте Магнит Плюс',
     startsIn: (n) => n <= 0 ? 'Начинается сегодня' : n === 1 ? 'Начнётся завтра' : `Начнётся через ${n} ${plural(n, ['день', 'дня', 'дней'])}`,
     endsIn: (n) => n <= 0 ? 'Последний день' : n === 1 ? 'Остался 1 день' : `Осталось ${n} ${plural(n, ['день', 'дня', 'дней'])}`,
     since: (d) => `В продаже с ${d}`, seenSince: (d) => `Акция с ${d}`, foundAgo: (t) => `Найдено ${t}`,
@@ -266,7 +267,8 @@ const I18N = {
     allTypes: { discount: '% İndirim', card: "Money Kart'la", multi: 'Çoklu alım', basket: 'Sepette indirim', cashback: 'Para iade', clearance: 'Stok eritme', catalog: 'Kampanya kataloğu', goodprice: 'İyi fiyat', promo: 'Diğer kampanyalar' },
     bimIndirim: 'İndirim', onSale: 'Satışta', soon: 'Yakında', fresh: 'Yeni', ekstra: 'Ekstra',
     money: "Money Kart'la", loyalty: 'Sadakat kartıyla', online: 'Sadece online', newBadge: 'YENİ',
-    vv: { card: 'Kartla', multi: '2 adet alımda', clearance: 'Son ürünler', online: 'Sadece online' },
+    vv: { card: 'Kartla', multi: '2 adet alımda', clearance: 'Son ürünler', online: 'Sadece online', cashback: 'Karta bonus' },
+    magnitCard: 'Mağazada Магнит Плюс kartıyla',
     startsIn: (n) => n <= 0 ? 'Bugün başlıyor' : n === 1 ? 'Yarın başlıyor' : `${n} gün sonra başlıyor`,
     endsIn: (n) => n <= 0 ? 'Son gün' : `${n} gün kaldı`,
     since: (d) => `${d} tarihinden beri satışta`, seenSince: (d) => `${d} tarihinden beri`, foundAgo: (t) => `${t} bulundu`,
@@ -330,6 +332,7 @@ function chipDefs() {
     return defs;
   }
   const order = state.store === 'vkusvill' ? ['card', 'multi', 'clearance', 'online']
+    : state.store.startsWith('magnit') ? ['discount', 'card', 'multi', 'cashback']
     : state.store === 'sok' ? ['discount', 'basket', 'cashback', 'multi', 'promo']
     : state.store === 'migros' ? ['card', 'multi', 'basket', 'clearance', 'catalog', 'goodprice', 'promo']
     : ['discount', 'card', 'multi', 'basket', 'cashback', 'clearance', 'catalog', 'goodprice', 'promo'];
@@ -339,7 +342,7 @@ function chipDefs() {
   const defs = [['all', t.all, () => true], ...order.map((k) => [k, label(k), has(k)]), ['fresh', t.fresh, isNew]];
   if (state.store === 'sok') defs.push(['ekstra', t.ekstra, (p) => p.e]);
   if (state.store === 'all') defs.push(['soon', t.soon, future]);
-  if (state.store === 'all' && country === 'ru') defs.splice(1, defs.length, ...defs.slice(1).filter((d) => ['discount', 'card', 'multi', 'clearance', 'fresh'].includes(d[0])));
+  if (state.store === 'all' && country === 'ru') defs.splice(1, defs.length, ...defs.slice(1).filter((d) => ['discount', 'card', 'multi', 'cashback', 'clearance', 'fresh'].includes(d[0])));
   return defs;
 }
 const inStore = (p) => !expired(p) && (state.store === 'all' ? (STORES[p.s].country || 'tr') === country : p.s === state.store);
@@ -419,7 +422,7 @@ function tagsFor(p) {
     out.push(['seen', 'clock-counter-clockwise', isNew(p) ? t.foundAgo(t.ago(minutesAgo(p.fs))) : t.seenSince(dayLabel(istDate(p.fs)))]);
   }
   if (p.m === 'money') out.push(['money', 'credit-card', t.money]);
-  if (p.m === 'loyalty') out.push(['money', 'credit-card', t.loyalty]);
+  if (p.m === 'loyalty') out.push(['money', 'credit-card', p.s.startsWith('magnit') ? t.magnitCard : t.loyalty]);
   if (p.on) out.push(['seen', 'globe', t.online]);
   for (const pr of p.pr || []) out.push(['promo', 'gift', pr]);
   return out;

@@ -7,15 +7,16 @@ const IMAGE_HOSTS = {
   sok: ['images.ceptesok.com'],
   migros: ['images.migrosone.com'],
   vkusvill: ['img.vkusvill.ru'],
-  magnit: ['images-foodtech.magnit.ru'],
+  magnit: ['images-foodtech.magnit.ru', 'promo-images.prod.ya.magnit.ru'],
+  magnitgm: ['images-foodtech.magnit.ru', 'promo-images.prod.ya.magnit.ru'],
 };
-const PAGE_HOSTS = { bim: ['www.bim.com.tr'], sok: ['www.sokmarket.com.tr'], migros: ['www.migros.com.tr'], vkusvill: ['vkusvill.ru'], magnit: ['magnit.ru'] };
+const PAGE_HOSTS = { bim: ['www.bim.com.tr'], sok: ['www.sokmarket.com.tr'], migros: ['www.migros.com.tr'], vkusvill: ['vkusvill.ru'], magnit: ['magnit.ru'], magnitgm: ['magnit.ru'] };
 
 const hostOf = (u) => { try { return new URL(u).host; } catch { return null; } };
 
 export function productProblems(p) {
   const out = [];
-  if (!p.id || !/^\w+-\d+$/.test(p.id)) out.push('id eksik/bozuk');
+  if (!p.id || !/^[a-z]+-[a-z]?\d+$/.test(p.id)) out.push('id eksik/bozuk');
   if (!p.name || p.name.length < 2) out.push('ad eksik');
   else if (/<|>|&[a-z]+;/i.test(p.name)) out.push('adda HTML artığı');
   if (typeof p.price !== 'number' || !(p.price > 0)) out.push('fiyat eksik/0');
