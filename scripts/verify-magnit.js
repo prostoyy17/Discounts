@@ -27,7 +27,11 @@ const stores = data.checkedStores;
 
 let failed = 0;
 for (const p of pick) {
-  const st = stores[Math.floor(Math.random() * stores.length)];
+  // One of the stores where the deal was confirmed (a store that does not
+  // sell the product shows no deal, or no page at all).
+  const own = stores.filter((x) => (p.checkedIn ?? []).includes(x.code));
+  const pool = own.length ? own : stores;
+  const st = pool[Math.floor(Math.random() * pool.length)];
   const opts = { delayMs: 2500, retries: 4, timeoutMs: 60000, headers: { Cookie: `shopCode=${st.code}` } };
   const issues = [];
   try {

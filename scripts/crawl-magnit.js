@@ -115,7 +115,8 @@ const stats = { stores: ok.length, candidates: 0, agreed: 0, differs: 0, single:
 const byId = new Map();
 const ids = new Set(ok.flatMap((r) => [...r.products.keys()]));
 for (const id of ids) {
-  const seen = ok.map((r) => r.products.get(id)).filter((p) => p && p.inStock);
+  const seenIn = ok.filter((r) => r.products.get(id)?.inStock);
+  const seen = seenIn.map((r) => r.products.get(id));
   const deal = seen.filter((p) => p.oldPrice || p.promotions.length);
   if (!deal.length) continue;
   stats.candidates++;
@@ -126,7 +127,7 @@ for (const id of ids) {
     p.oldPrice = Math.min(...seen.map((x) => x.oldPrice));
     p.discountPercent = Math.round((1 - p.price / p.oldPrice) * 100);
   }
-  p.checkedIn = seen.length;
+  p.checkedIn = seenIn.map((r) => r.code); // the stores that confirmed it (the verifier checks one of them)
   byId.set(id, p);
   stats.agreed++;
 }
@@ -145,7 +146,7 @@ for (const id of leafIds) {
     byId.delete(prod.id); // the in-store leaflet price wins over the online one
   }
   delete it.productId;
-  it.checkedIn = seen.length;
+  it.checkedIn = ok.map((r) => r.code);
   byId.set(it.id, it);
   stats.leafletAgreed++;
 }
