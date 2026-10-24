@@ -78,7 +78,9 @@ async function crawlStore(code, city) {
       try { r = parseListing(html); } catch (e) { fatal.push(`${cat} s.${n}: ${e.message}`); break; }
       if (n === 1) { last = Math.ceil(r.total / r.pageSize); sections++; }
       if (r.cards !== r.products.length) fatal.push(`${cat} s.${n}: kart ${r.cards}, ürün ${r.products.length}`);
-      if (n < last && r.cards !== r.pageSize) fatal.push(`${cat} s.${n}: ${r.cards} kart (beklenen ${r.pageSize})`);
+      // The site drops out-of-stock goods from a page after paging, so a page
+      // can be a little short; an empty or tiny page means something broke.
+      if (n < last && r.cards < r.pageSize * 0.5) fatal.push(`${cat} s.${n}: ${r.cards} kart (beklenen ${r.pageSize})`);
       rows += r.products.length;
       // A good can sit in two sections; the first one names its category.
       for (const p of r.products) if (!products.has(p.id)) products.set(p.id, p);
