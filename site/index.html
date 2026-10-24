@@ -467,6 +467,7 @@ function passes(skip) {
 const activeFilters = () => (state.pmin != null || state.pmax != null) + !!state.minDisc + !!state.groups.size;
 
 function render() {
+  queueMicrotask(saveView); // after this render: remember chip/filters/search
   renderChips();
   const sorters = {
     none: () => 0,
@@ -623,6 +624,7 @@ function show() {
   Promise.all(ids.map(load)).then(() => {
     if (token !== showToken) return; // user switched store meanwhile
     renderMenu(); render();
+    if (restoring) restoreScroll();
   }).catch(showError);
   // Warm the other stores in the background so switching is instant.
   if (state.store !== 'all') setTimeout(() => countryStores().forEach((x) => load(x.id)?.catch?.(() => {})), 1500);
@@ -654,6 +656,49 @@ $('more').onclick = showMore;
 let qTimer; $('q').addEventListener('input', () => { clearTimeout(qTimer); qTimer = setTimeout(() => { if (DATA && DATA.products.length) { state.shown = PAGE; render(); } }, 150); });
 new IntersectionObserver((es) => { if (es[0].isIntersecting && !$('more').hidden) showMore(); }, { rootMargin: '600px' }).observe($('more'));
 setInterval(() => { if (DATA) renderMenu(); }, 60000); // keep "N min ago" current
+
+// Remember where the user was (store, chips, search, filters, scroll) so a
+// reload — or the phone dropping the tab in the background — brings them back
+// to the same product. The position is kept as "this card at this height",
+// which survives images loading at different speeds.
+const VIEW_KEY = 'view', VIEW_TTL = 12 * 36e5;
+let restoring = null;
+try { history.scrollRestoration = 'manual'; } catch {}
+function saveView() {
+  if (!DATA || restoring) return;
+  let key = null, off = 0;
+  if (scrollY > 40) {
+    const cards = $('grid').children;
+    for (let i = 0; i < cards.length; i++) {
+      const r = cards[i].getBoundingClientRect();
+      if (r.bottom > 70) { const p = current[i]; key = p && p.s + '|' + p.u; off = r.top; break; }
+    }
+  }
+  store.set(VIEW_KEY, JSON.stringify({ t: Date.now(), country, store: state.store, chip: state.chip, q: $('q').value,
+    pmin: state.pmin, pmax: state.pmax, minDisc: state.minDisc, groups: [...state.groups], shown: state.shown, key, off }));
+}
+function loadView() {
+  let v; try { v = JSON.parse(store.get(VIEW_KEY)); } catch { return; }
+  if (!v || Date.now() - v.t > VIEW_TTL || v.country !== country) return;
+  state.store = v.store || state.store; state.chip = v.chip || 'all'; $('q').value = v.q || '';
+  state.pmin = v.pmin ?? null; state.pmax = v.pmax ?? null; state.minDisc = v.minDisc || 0;
+  state.groups = new Set(v.groups || []); state.shown = Math.max(PAGE, v.shown || PAGE);
+  restoring = v;
+}
+function restoreScroll() {
+  const v = restoring; restoring = null;
+  if (!v.key) return;
+  let i = current.findIndex((p) => p.s + '|' + p.u === v.key);
+  if (i < 0) return; // that deal is gone: stay at the top
+  if (i >= state.shown) { state.shown = Math.ceil((i + 1) / PAGE) * PAGE; render(); }
+  const go = () => { const el = $('grid').children[i]; if (el) window.scrollTo(0, el.getBoundingClientRect().top + scrollY - v.off); };
+  go(); requestAnimationFrame(go); setTimeout(go, 300); // again after fonts/layout settle
+}
+let saveTimer;
+addEventListener('scroll', () => { clearTimeout(saveTimer); saveTimer = setTimeout(saveView, 250); }, { passive: true });
+addEventListener('pagehide', saveView);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveView(); });
+loadView();
 
 renderStatic();
 fetch('data/stores.json', { cache: 'no-cache' })
