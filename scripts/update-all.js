@@ -21,6 +21,7 @@ const STORES = [
   { id: 'sok', crawl: 'scripts/crawl-sok.js', verify: 'scripts/verify-sok.js' },
   { id: 'migros', crawl: 'scripts/crawl-migros.js', verify: 'scripts/verify-migros.js' },
   { id: 'vkusvill', crawl: 'scripts/crawl-vkusvill.js', verify: 'scripts/verify-vkusvill.js' },
+  { id: 'magnit', crawl: 'scripts/crawl-magnit.js', verify: 'scripts/verify-magnit.js' },
 ];
 
 const args = process.argv;

@@ -7,8 +7,9 @@ const IMAGE_HOSTS = {
   sok: ['images.ceptesok.com'],
   migros: ['images.migrosone.com'],
   vkusvill: ['img.vkusvill.ru'],
+  magnit: ['images-foodtech.magnit.ru'],
 };
-const PAGE_HOSTS = { bim: ['www.bim.com.tr'], sok: ['www.sokmarket.com.tr'], migros: ['www.migros.com.tr'], vkusvill: ['vkusvill.ru'] };
+const PAGE_HOSTS = { bim: ['www.bim.com.tr'], sok: ['www.sokmarket.com.tr'], migros: ['www.migros.com.tr'], vkusvill: ['vkusvill.ru'], magnit: ['magnit.ru'] };
 
 const hostOf = (u) => { try { return new URL(u).host; } catch { return null; } };
 

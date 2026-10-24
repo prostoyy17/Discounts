@@ -20,7 +20,9 @@ const META = {
   bim: { name: 'BİM', country: 'tr', currency: 'TRY', every: 8, logo: 'https://cdn2.bim.com.tr/templates/images/bim-logo-single.png', img: 'https://cdn1.bim.com.tr/uploads/aktuel-urunler/', url: 'https://www.bim.com.tr/' },
   sok: { name: 'ŞOK', country: 'tr', currency: 'TRY', every: 24, logo: 'https://images.ceptesok.com/logos/service-types/market-logo.svg', img: 'https://images.ceptesok.com/product-assets/', url: 'https://www.sokmarket.com.tr/' },
   migros: { name: 'Migros', country: 'tr', currency: 'TRY', every: 48, logo: 'https://www.migros.com.tr/assets/images/seo/new/apple-touch-icon-152x152.png', img: 'https://images.migrosone.com/sanalmarket/product/', url: 'https://www.migros.com.tr/' },
-  vkusvill: { name: 'ВкусВилл', country: 'ru', currency: 'RUB', every: 24, logo: 'https://vkusvill.ru/apple-touch-icon.png?v=1', img: 'https://img.vkusvill.ru/pim/images/site/', url: 'https://vkusvill.ru/' },
+  vkusvill: { name: 'ВкусВилл', country: 'ru', currency: 'RUB', region: 'Москва', every: 24, logo: 'https://vkusvill.ru/apple-touch-icon.png?v=1', img: 'https://img.vkusvill.ru/pim/images/site/', url: 'https://vkusvill.ru/' },
+  // Prices of the store magnit.ru picks for visitors without an address (Краснодар).
+  magnit: { name: 'Магнит', country: 'ru', currency: 'RUB', region: 'Краснодар', every: 48, logo: 'https://magnit.ru/apple-touch-icon-180x180.png', img: 'https://images-foodtech.magnit.ru/', url: 'https://magnit.ru/' },
 };
 
 // Same promo rules as the current parsers, so data published by an older
@@ -63,7 +65,7 @@ export async function buildSiteData(storeIds, dir = 'site/data') {
     const all = data.products.filter((p) => p.inStock !== false).map((p) => ({ ...p, promotions: cleanPromos(p.promotions) }));
     const list = all.filter((p) => dealTypes(p).length);
     stores.push({
-      id, name: meta.name, country: meta.country, currency: meta.currency, logo: meta.logo, img: meta.img, url: meta.url, source: data.source,
+      id, name: meta.name, country: meta.country, currency: meta.currency, region: meta.region ?? null, logo: meta.logo, img: meta.img, url: meta.url, source: data.source,
       fetchedAt: data.fetchedAt, stale: data.stale ?? null, every: meta.every, trackingSince: data.trackingSince ?? null,
       count: list.length, discounts: list.filter((p) => p.oldPrice).length, catalogSize: all.length,
     });

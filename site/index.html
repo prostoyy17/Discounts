@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#F5F5F3">
 <title>RevoSell — скидки и акции магазинов</title>
-<meta name="description" content="RevoSell: скидки и акции BİM, ŞOK и Migros в одном месте.">
+<meta name="description" content="RevoSell: скидки и акции магазинов Турции и России в одном месте.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23D7FF00%22/%3E%3Ctext x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-weight=%22900%22%3ER%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +18,7 @@
 <link rel="preconnect" href="https://images.ceptesok.com">
 <link rel="preconnect" href="https://cdn1.bim.com.tr">
 <link rel="preconnect" href="https://img.vkusvill.ru">
+<link rel="preconnect" href="https://images-foodtech.magnit.ru">
 <style>
 :root{
   --bg:#F5F5F3; --surface:#FFFFFF; --mint:#C5E2DF; --lime:#D7FF00; --ink:#000000;
@@ -103,7 +104,7 @@ body.menu .drawer{display:flex;animation:slide .25s ease}
 .store-btn .ico{width:44px;height:44px;color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:.9rem;flex:none}
 .store-btn .ico.all{background:var(--lime);border-radius:50%;box-shadow:none;font-size:22px}
 .store-btn .ico img{width:100%;height:100%;object-fit:contain}
-.store-btn .ico[data-store=vkusvill] img{border-radius:12px} /* square app-icon logo */
+.store-btn .ico[data-store=vkusvill] img,.store-btn .ico[data-store=magnit] img{border-radius:12px} /* square app-icon logos */
 .store-btn .info{flex:1;min-width:0}
 .store-btn .nm{font-weight:700}
 .store-btn .sub{font-size:.74rem;display:flex;align-items:center;gap:6px;color:var(--muted)}
@@ -229,6 +230,7 @@ const I18N = {
     deals: (n) => `${n.toLocaleString('ru-RU')} ${plural(n, ['акция', 'акции', 'акций'])}`,
     more: 'Показать ещё', empty: 'Ничего не найдено', error: 'Не удалось загрузить данные. Попробуйте позже.',
     sort: { disc: 'Выгодные', asc: 'Дешевле', desc: 'Дороже', fresh: 'Новые', name: 'А–Я', none: 'Как в магазине' },
+    pricesIn: (c) => `цены: ${c}`,
     filters: 'Фильтры', sortT: 'Сортировка', price: 'Цена', from: 'от', to: 'до', discount: 'Скидка', anyDisc: 'Любая', discFrom: (n) => `от ${n}%`,
     type: 'Тип товара', food: 'Продукты', nonfood: 'Товары', pickAll: 'Выбрать все', unpickAll: 'Снять', clear: 'Сбросить', resetFilters: 'Сбросить фильтры',
     show: (n) => n ? `Показать ${n.toLocaleString('ru-RU')}` : 'Ничего не найдено',
@@ -254,6 +256,7 @@ const I18N = {
     deals: (n) => `${n.toLocaleString('tr-TR')} fırsat`,
     more: 'Daha fazla göster', empty: 'Sonuç bulunamadı', error: 'Veriler yüklenemedi. Lütfen daha sonra tekrar deneyin.',
     sort: { disc: 'En avantajlı', asc: 'Önce ucuz', desc: 'Önce pahalı', fresh: 'Yeni', name: 'A–Z', none: 'Market sırası' },
+    pricesIn: (c) => `fiyatlar: ${c}`,
     filters: 'Filtreler', sortT: 'Sıralama', price: 'Fiyat', from: 'en az', to: 'en çok', discount: 'İndirim', anyDisc: 'Hepsi', discFrom: (n) => `%${n} ve üzeri`,
     type: 'Ürün türü', food: 'Gıda', nonfood: 'Gıda dışı', pickAll: 'Tümünü seç', unpickAll: 'Kaldır', clear: 'Temizle', resetFilters: 'Filtreleri temizle',
     show: (n) => n ? `${n.toLocaleString('tr-TR')} ürünü göster` : 'Sonuç yok',
@@ -373,6 +376,7 @@ function renderMenu() {
   $('storeList').replaceChildren(...rows.map((r) => {
     const b = el('button', 'store-btn'); b.type = 'button'; b.setAttribute('aria-current', state.store === r.id);
     const info = el('span', 'info'); info.append(el('div', 'nm', r.name));
+    if (r.s?.region) info.append(el('div', 'sub', T().pricesIn(r.s.region))); // regional prices
     const ico = el('span', r.s ? 'ico' : 'ico all');
     if (r.s) ico.dataset.store = r.id;
     if (r.s?.logo) {

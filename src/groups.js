@@ -15,23 +15,23 @@ export const FOOD = new Set(GROUPS.slice(0, 9));
 // Store category -> group. First match wins; lower-cased with Turkish rules.
 const BY_CATEGORY = [
   ['ready', /hazır yemek|готовая еда|^кафе$/],
-  ['frozen', /dondur|заморож|морожен/],
+  ['frozen', /dondur|заморож|замороз|морожен/],
   ['dairy', /süt|kahvaltı|молочн|^сыры$/],
   ['meat', /^et[ ,]|tavuk|balık|şarküteri|мясо|птица|рыба|колбас/],
   ['produce', /meyve|sebze|овощи/],
   ['bakery', /fırın|ekmek|хлеб/],
   ['snacks', /atıştırmal|сладост|орехи|снеки/],
-  ['drinks', /içecek|напитки|чай и кофе/],
-  ['staples', /temel gıda|yemeklik|бакалея|крупы|консервы|масла, соусы|вегетариан|особое питание|индилавка/],
-  ['beauty', /kozmetik|kişisel bakım|косметика|здоровье/],
+  ['drinks', /içecek|напитки|чай и кофе|чай, кофе|алкоголь/],
+  ['staples', /temel gıda|yemeklik|бакалея|крупы|консервы|масла, соусы|вегетариан|особое питание|спортивное питание|индилавка/],
+  ['beauty', /kozmetik|kişisel bakım|косметика|здоровье|гигиена|для красоты/],
   ['cleaning', /temizlik|deterjan|kağıt|бытовая химия/],
   ['baby', /bebek|çocuk|для детей/],
-  ['hobby', /kitap|kırtasiye|oyuncak|spor|канц/],
+  ['hobby', /kitap|kırtasiye|oyuncak|spor|канц|игрушк/],
   ['tech', /elektr|telefon|beyaz eşya|görüntü|ısıtma|bilgisayar/],
-  ['clothes', /giyim/],
+  ['clothes', /giyim|одежд/],
   ['pets', /evcil|животн/],
   ['home', /^ev[ ,]|yaşam|для дома|сад и огород|çiçek/],
-  ['other', /подарк|хиты/],
+  ['other', /подарк|хиты|автотовар/],
 ];
 
 // Product name -> group, for stores without categories (BİM). Turkish names
