@@ -92,6 +92,9 @@ export function parseDetail(html) {
   };
 }
 
+// Open-ended promotions carry the end date 4000-01-01 (or 1970-01-01).
+const realDate = (d) => (d && d >= '2000' && d < '2100' ? String(d).slice(0, 10) : null);
+
 /**
  * One promo-catalog page (the store's leaflet) -> { total, pageSize, page,
  * cards, items }. Only "Скидка" items with a price are deals we can show;
@@ -130,7 +133,7 @@ export function parsePromoPage(html) {
       image: x.image || null,
       url: x.link ? new URL(x.link.split('?')[0], BASE).href : null,
       validFrom: x.startDate || null,
-      validTo: x.endDate || null,
+      validTo: realDate(x.endDate),
     });
   }
   return { total: g.pagination.total, pageSize: g.pagination.pageSize, page: g.pagination.page, cards: g.goods.length, items };
@@ -142,5 +145,5 @@ export function parsePromoDetail(html) {
   if (!x) throw new Error('promotions-item bulunamadı');
   const kop = (v) => (typeof v === 'number' && v > 0 ? Math.round(v) / 100 : null);
   const price = kop(x.price), old = kop(x.oldPrice);
-  return { id: `magnit-p${x.id}`, name: clean(x.name), price, oldPrice: old != null && price != null && old > price ? old : null, category: x.categoryName || null, validTo: x.endDate || null };
+  return { id: `magnit-p${x.id}`, name: clean(x.name), price, oldPrice: old != null && price != null && old > price ? old : null, category: x.categoryName || null, validTo: realDate(x.endDate) };
 }

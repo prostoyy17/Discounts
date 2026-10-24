@@ -80,3 +80,8 @@ test('leaflet product page (prices in kopecks)', () => {
   assert.deepEqual(parsePromoDetail(fx('promo-product-milka.html')),
     { id: 'magnit-p2187857', name: 'Мороженое эскимо Milka сливочное лесные ягоды, 64 г', price: 129.99, oldPrice: 184.99, category: 'Полуфабрикаты', validTo: '2026-11-03' });
 });
+
+test('open-ended promotions (end date 4000-01-01) have no end date', () => {
+  const r = parsePromoPage(fx('promo-catalog-p1.html'));
+  assert.ok(r.items.every((x) => x.validTo == null || (x.validTo >= '2026' && x.validTo < '2100')));
+});
