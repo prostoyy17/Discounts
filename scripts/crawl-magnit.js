@@ -68,7 +68,7 @@ async function get(code, url, key, n) {
 
 async function crawlStore(code, city) {
   const fatal = [], products = new Map(), leaflet = new Map();
-  let rows = 0, sections = 0;
+  let rows = 0, sections = 0, shortPages = 0;
   for (const cat of CATEGORIES) {
     let last = 1;
     for (let n = 1; n <= last; n++) {
@@ -78,9 +78,10 @@ async function crawlStore(code, city) {
       try { r = parseListing(html); } catch (e) { fatal.push(`${cat} s.${n}: ${e.message}`); break; }
       if (n === 1) { last = Math.ceil(r.total / r.pageSize); sections++; }
       if (r.cards !== r.products.length) fatal.push(`${cat} s.${n}: kart ${r.cards}, ürün ${r.products.length}`);
-      // The site drops out-of-stock goods from a page after paging, so a page
-      // can be a little short; an empty or tiny page means something broke.
-      if (n < last && r.cards < r.pageSize * 0.5) fatal.push(`${cat} s.${n}: ${r.cards} kart (beklenen ${r.pageSize})`);
+      // The site drops out-of-stock goods from a page after paging, so pages
+      // can be short (Мурманск, alcohol: 5 of 33). Breakage shows up as a page
+      // that does not parse, or as a store with too few goods (checked below).
+      if (n < last && r.cards < r.pageSize) shortPages++;
       rows += r.products.length;
       // A good can sit in two sections; the first one names its category.
       for (const p of r.products) if (!products.has(p.id)) products.set(p.id, p);
@@ -99,7 +100,7 @@ async function crawlStore(code, city) {
     for (const it of r.items) leaflet.set(it.id, it);
   }
   if (products.size < FORMAT.minProducts) fatal.push(`çok az ürün: ${products.size}`);
-  console.log(`${code} ${city.padEnd(16)} ${sections} bölüm, ${rows} satır, ${products.size} ürün, yaprakta ${leaflet.size} fiyatlı fırsat${fatal.length ? `, ${fatal.length} HATA` : ''}`);
+  console.log(`${code} ${city.padEnd(16)} ${sections} bölüm, ${rows} satır, ${products.size} ürün, ${shortPages} kısa sayfa, yaprakta ${leaflet.size} fiyatlı fırsat${fatal.length ? `, ${fatal.length} HATA` : ''}`);
   return { code, city, products, leaflet, fatal };
 }
 
